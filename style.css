@@ -1,0 +1,43 @@
+body {
+    text-align: center;
+}
+
+#heading {
+    font-size: 50px;
+}
+
+#missionStatement {
+    width: 700px;
+    margin: 0 auto;
+}
+
+#login {
+    font-size: 20px;
+    padding: 20px;
+}
+
+#signup {
+    font-size: 20px;
+    padding: 20px;
+}
+
+#missionStatement #missionTitle {
+    text-decoration: underline;
+}
+
+nav {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    text-decoration: none;  
+}
+
+.item {
+    color: black;
+    text-decoration: none;
+}
+
+.item:hover {
+    background: grey;
+    opacity: 0.5;
+}
