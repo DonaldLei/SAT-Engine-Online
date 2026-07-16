@@ -1,0 +1,96 @@
+@import url('https://googleapis.com');
+
+/* welcomeSection styles  */
+html {
+    background-color: #212856;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background-color: white;
+    font-family: 'Lexend', sans-serif;
+}
+
+#welcomeSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.landingPageHeader {
+    background-color: #212856;
+    width: 100%;
+}
+
+header {
+    text-align: center;
+    color: white;
+    font-weight: 800;
+    font-size: 25px;
+}
+
+.bodyContainer {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1000px;
+    gap: 3rem;
+    margin: auto;
+    font-weight: 800;
+}
+
+#missionStatement, .enterPortal {
+    flex: 1;
+    width: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-style: solid;
+    border-radius: 20px;
+    padding: 20px 32px;
+    font-size: 18px;
+}
+
+#missionStatement { 
+    text-align: left; 
+}
+
+.enterPortal { 
+    flex-direction: column; 
+}
+
+#enterPortalButton, #login {
+    width: 200px;
+    padding: 15px 6px;
+    font-size: 18px;
+    background-color: #3BBAAB;
+    border: none;
+    border-radius: 9999px;
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+#enterPortalButton:active {
+    background-color: #2F9589;
+}
+
+.highlightWord {
+    color: #1BA599;
+}
+
+#authenticationSection {
+    background-color: #212856;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hidden {
+    display: none !important;
+}
