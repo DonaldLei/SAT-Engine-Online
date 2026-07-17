@@ -17,10 +17,10 @@
 
         <div class = "bodyContainer">
             <div id = missionStatement>
-                <p>Our mission is to ensure that all students are prepared and confident in their
-                    SAT skills. We aim to fill in the gaps in students' skills by assessing their
+                <p>Our mission is to ensure that all students are <span class = "highlightWord">prepared</span> and <span class = "highlightWord">confident</span> in their
+                    <span class = "underlineWord">SAT skills</span>. We aim to fill in the gaps in students' skills by assessing their
                     weaknesses and correcting them through targeted practice. By identifying students' skills and being able to track their
-                    progress, tutors will be able to provide more meaningful and effective instruction that is personalized
+                    progress, tutors will be able to provide more <span class = "highlightWord">meaningful</span> and <span class = "highlightWord">effective</span> instruction that is personalized
                     to the student.
                 </p>
             </div>
@@ -39,11 +39,102 @@
     </div>
 
     <div id = "dashboardSection" class = "viewApp hidden">
+        <button id = "logout">Log Out</button>
         <div class = "dashboardContainer">
-            <h2>Hello, Donald!</h2>
-            <h1>Your current progress: </h1>
+            <h1>Hello, Donald!</h2>
+            <h2>Your current progress: </h1>
+            
+            <div class = "domainMasteryContainer">
+                <div id = "domainMasteryReadingContainer">
+                    <p>Reading and Writing</p>
+                    <details>
+                        <summary>Information and Ideas</summary>
+                        <ul>
+                            <li>Central Ideas and Details</li>
+                            <li>Inferences</li>
+                            <li>Command of Evidence</li>
+                        </ul>
+                    </details>
+
+                    <details>
+                        <summary>Craft and Structure</summary>
+                            <ul>
+                                <li>Words in Context</li>
+                                <li>Text Structure in Purpose</li>
+                                <li>Cross-Text Connection</li>
+                            </ul>
+                    </details>
+                    
+                    <details>
+                        <summary>Expression of Ideas</summary>
+                            <ul>
+                                <li>Rhetorical Synthesis</li>
+                                <li>Transitions</li>
+                            </ul>
+                    </details>
+
+                    <details>
+                        <summary>Standard English Conventions</summary>
+                            <ul>
+                                <li>Boundaries</li>
+                                <li>Form, Structure, and Sense</li>
+                            </ul>
+                    </details>
+                </div>
+
+                <div id = "domainMasteryMathContainer">
+                    <p>Math</p>
+                    <details>
+                        <summary>Algebra</summary>
+                            <ul>
+                                <li>Linear equations in one variable</li>
+                                <li>Linear functions</li>
+                                <li>Linear equations in two variables</li>
+                                <li>Systems of two linear equations in two variables</li>
+                                <li>Linear inequalities in one or two variables</li>
+                            </ul>
+                    </details>
+
+                    <details>
+                        <summary>Advanced Algebra</summary>
+                            <ul>
+                                <li>Nonlinear functions</li>
+                                <li>Nonlinear equations in one variable</li>
+                                <li>Systems of equations in two variables</li>
+                                <li>Equivalent expressions</li>
+                            </ul>
+                    </details>
+
+                    <details>
+                        <summary>Problem-Solving and Data Analysis</summary>
+                            <ul>
+                                <li>Ratios, rates, proportional relationships, and units</li>
+                                <li>Percentages</li>
+                                <li>One-variable data: Distributions and measures of center and spread</li>
+                                <li>Two-variable data: Models and scatterplots</li>
+                                <li>Probability and conditional probability</li>
+                                <li>Inference from sample statistics and margin of error</li>
+                                <li>Evaluating statistical claims: Observational studies and experiments</li>
+                            </ul>
+                    </details>
+
+                    <details>
+                        <summary>Geometry and Trigonometry</summary>
+                            <ul>
+                                <li>Area and volume</li>
+                                <li>Lines, angles, and triangles</li>
+                                <li>Right triangles and trigonometry</li>
+                                <li>Circles</li>
+                            </ul>
+                    </details>
+                    
+                </div>
+            </div>
+            <button id = "startPractice">Start Practice</button>
         </div>
-        <h2>Testing</h2>
+    </div>
+
+    <div id = "practiceSection" class = "viewApp hidden">
     </div>
 </div>
 

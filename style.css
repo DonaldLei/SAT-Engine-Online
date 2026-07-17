@@ -84,11 +84,99 @@ header {
     color: #1BA599;
 }
 
+.underlineWord {
+    text-decoration: underline;
+    text-decoration-color: #7B5CD0;
+}
+
 #authenticationSection {
     background-color: #212856;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    min-height: 80vh;
+}
+
+#dashboardSection {
+    background-color: #212856;
+    padding-top: 50px;
+}
+.dashboardContainer {
+    background-color: white;
+    padding: 15px;
+    border-style: solid;
+    width: 1300px;
+    margin-left: 40px;
+    border-radius: 20px;
+    margin: 20px;
+}
+
+#logout {
+    position: absolute;
+    right: 20px;
+    top: 14px;
+    color: white;
+    border: none;
+    width: 150px;
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #3BBAAB;
+    border-radius: 9999px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+#logout:active {
+    background-color: #2F9589;
+}
+
+.dashboardContainer {
+    display: flex;
+    flex-direction: column;
+    padding: 20px; 
+    margin: 0 auto;
+    width: 90%;
+}
+.domainMasteryContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+#startPractice {
+    display: block;
+    margin: 20px auto;
+    color: white;
+    border: none;
+    width: 200px;
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #7B5CD0;
+    border-radius: 9999px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+#startPractice:active {
+    background-color: #5C459C;
+}
+
+#practiceSection {
+    background-color: #212856;
+}
+.question-box {
+    border: 2px solid #333;
+    padding: 20px;
+    margin: 20px auto;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 10px;
+    background-color: white;
+    text-align: center;
 }
 
 .hidden {
