@@ -15,7 +15,6 @@ const loginButton = document.getElementById('login');
 const logoutButton = document.getElementById('logout');
 const startPracticeButton = document.getElementById('startPractice');
 
-
 function changeSection(nextSection){
     welcomeSection.classList.add('hidden');
     authenticationSection.classList.add('hidden');

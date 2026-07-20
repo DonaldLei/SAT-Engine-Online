@@ -39,11 +39,51 @@
     </div>
 
     <div id = "dashboardSection" class = "viewApp hidden">
-        <button id = "logout">Log Out</button>
+        <div class = "sidebar">
+            <h1>ClearPillar</h1>
+
+            <nav class = "mainTabs">
+                <button class = "menuButton">Dashboard</button>
+                <button class = "menuButton">Statistics</button> 
+                <button class = "menuButton">Work Completed</button>
+                <button class = "menuButton">Settings</button>
+                <button class = "menuButton">Logout</button>
+            </nav>
+        </div>
+
         <div class = "dashboardContainer">
-            <h1>Hello, Donald!</h2>
-            <h2>Your current progress: </h1>
+            <div class = "welcomeUserContainer">
+                <p><span id="current-date"></span></p>
+                <h1>Hello, Donald!</h2>
+                <h2>You still have # quiz(zes) to complete this week</h1>
+            </div>
+
+            <div class = "startPractice">
+                <h1 id = "tasksInfo">Your tasks for today</h1>
+                <div class = "startPracticeContainer">
+                    <div class = "startPracticeCard1">
+                        <div><p>Reading & Writing</p></div>
+                        <div><p>Questions left: </p></div>
+                        <div><button id = "startPracticeEnglish">Start</button></div>
+                    </div>
+
+                    <div class = "startPracticeCard2">
+                        <div><p>Mathematics</p></div>
+                        <div><p>Questions left: </p></div>
+                        <div><button id = "startPracticeMath">Start</button></div>
+                    </div>
+                </div>  
+            </div>
             
+            <div id = "quickInfoContainer">
+                <h2>Quick Information</h2>
+                <div class = "quickInfoStatistics">
+                    <p>You have completed ()% of all the questions in our database. Keep up the good work!</p>
+                    <hr>
+                    <p>Top 3 Reading & Writing Topics to Improve:</p>
+                    <p>Top 3 Mathematics Topics to Improve:</p>
+                </div>
+            </div>
             <div class = "domainMasteryContainer">
                 <div id = "domainMasteryReadingContainer">
                     <p>Reading and Writing</p>
@@ -127,10 +167,9 @@
                                 <li>Circles</li>
                             </ul>
                     </details>
-                    
+
                 </div>
             </div>
-            <button id = "startPractice">Start Practice</button>
         </div>
     </div>
 
@@ -139,5 +178,17 @@
 </div>
 
 <script src = "app.js"></script>
+<script>
+  const today = new Date();
+  
+  let dayName = today.toLocaleDateString('en-US', {weekday: 'long'});
+  let monthName = today.toLocaleDateString('en-US', {month: 'long'});
+  let dayOfMonth = today.getDate();
+
+  const formattedDate = `${monthName} ${dayOfMonth} | ${dayName}`;
+  
+  document.getElementById('current-date').textContent = formattedDate;
+</script>
+
 </body>
 </html>
