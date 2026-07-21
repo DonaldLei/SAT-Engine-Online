@@ -112,9 +112,11 @@ header {
     background-color: white;
     align-items: center;
     font-family: 'Lexend', sans-serif;
-    min-height: 100dvh;
+    height: 100vh;
+    width: 250px;
+    padding: 10px;  
     flex-shrink: 0;
-    position: static;
+    position: fixed;
 }
 
 .sidebar h1 {
@@ -124,12 +126,16 @@ header {
 
 .mainTabs {
     color: white;
-    width: 150px;
-    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 80px;
+    flex-grow: 1;
+    gap: 1px;
+
+}
+
+.mainTabs .menuButton:nth-child(4) {
+    margin-top: 320px; 
 }
 
 .menuButton {
@@ -140,7 +146,7 @@ header {
     border-radius: 15px;
     border-color: white;
     font-size: 16px;
-    margin: 20px;
+    margin: 0;
     padding: 20px;
     display: flex;
     align-items: center;
@@ -151,6 +157,7 @@ header {
     background-color: #E3DCF5;
     color: #7B5CD0;
 }
+
 #logoutButton {
     bottom: 10px;
 }
@@ -175,13 +182,10 @@ header {
     background-color: #EFEFEF;
     padding: 15px;
     width: 1300px;
-    margin-left: 40px;
-    margin: 20px;
+    margin-left: 260px;
     display: flex;
     flex-direction: column;
     padding: 20px; 
-    margin: 0 auto;
-    width: 90%;
     min-height: 100vh;
 }
 
