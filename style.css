@@ -1,9 +1,8 @@
 @import url('https://googleapis.com');
 
-/* welcomeSection styles  */
-
-html {
-    background-color: #212856;
+/* Global */
+html { 
+    background-color: #212856; 
 }
 
 body {
@@ -12,14 +11,29 @@ body {
     width: 100%;
     background-color: white;
     font-family: 'Lexend', sans-serif;
+    overscroll-behavior: none;
 }
 
-#welcomeSection {
+/* Sections */
+#welcomeSection, #authenticationSection {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     min-height: 80vh;
+}
+
+#authenticationSection { 
+    background-color: #212856; 
+}
+
+#dashboardSection {
+    flex-grow: 1;
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    align-items: flex-start;
+    background-color: #212856;
 }
 
 .landingPageHeader {
@@ -51,7 +65,7 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-    border-style: solid;
+    border: 1px solid;
     border-radius: 20px;
     padding: 20px 32px;
     font-size: 18px;
@@ -65,7 +79,15 @@ header {
     flex-direction: column; 
 }
 
-#enterPortalButton, #login {
+.diagnosticContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Buttons */
+#enterPortalButton, #login, #startPracticeEnglish, #startPracticeMath {
     width: 200px;
     padding: 15px 6px;
     font-size: 18px;
@@ -77,35 +99,34 @@ header {
     cursor: pointer;
 }
 
-#enterPortalButton:active {
-    background-color: #2F9589;
+#enterPortalButton:active, #login:active { 
+    background-color: #2F9589; 
 }
 
-.highlightWord {
-    color: #1BA599;
+#startPracticeEnglish, #startPracticeMath {
+    background-color: #7B5CD0;
+    margin: 20px auto;
+    display: block;
+    padding: 10px 20px;
 }
 
-.underlineWord {
-    text-decoration: underline;
-    text-decoration-color: #7B5CD0;
+#startPracticeEnglish:active, #startPracticeMath:active { 
+    background-color: #5C459C; 
 }
 
-#authenticationSection {
-    background-color: #212856;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 80vh;
+#startDiagnostic {
+    width: 200px;
+    padding: 15px 6px;
+    font-size: 18px;
+    background-color: #3BBAAB;
+    border: none;
+    border-radius: 9999px;
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
 }
 
-#dashboardSection {
-    flex-grow: 1;
-    height: 100%;
-    overflow-y: auto;
-    display: flex;
-}
-
+/* Sidebar */
 .sidebar {
     display: flex;
     flex-direction: column;
@@ -119,9 +140,9 @@ header {
     position: fixed;
 }
 
-.sidebar h1 {
-    padding: 10px;
-    color: #212856;
+.sidebar h1 { 
+    padding: 10px; 
+    color: #212856; 
 }
 
 .mainTabs {
@@ -131,10 +152,9 @@ header {
     align-items: flex-start;
     flex-grow: 1;
     gap: 1px;
-
 }
 
-.mainTabs .menuButton:nth-child(4) {
+.mainTabs .menuButton:nth-child(4) { 
     margin-top: 320px; 
 }
 
@@ -142,9 +162,8 @@ header {
     color: #212856;
     background: none;
     cursor: pointer;
-    border-style: solid;
+    border: 1px solid white;
     border-radius: 15px;
-    border-color: white;
     font-size: 16px;
     margin: 0;
     padding: 20px;
@@ -153,40 +172,76 @@ header {
     justify-content: center;
 }
 
-.menuButton:hover {
-    background-color: #E3DCF5;
-    color: #7B5CD0;
+.menuButton:hover { 
+    background-color: #E3DCF5; 
+    color: #7B5CD0; 
 }
 
-#logoutButton {
-    bottom: 10px;
-}
-
-.welcomeUserContainer {
-    background-color: #7B5CD0;
-    border-style: solid;
-    border-radius: 20px;
-    border-color: #EFEFEF;
-    padding: 15px;
-    color: white;
-    margin: 25px;
-}
-
-#dashboardSection {
-    background-color: #212856;
-    display: flex;
-    align-items: flex-start;
-}
-
+/* Dashboard */
 .dashboardContainer {
     background-color: #EFEFEF;
-    padding: 15px;
     width: 1300px;
     margin-left: 260px;
     display: flex;
     flex-direction: column;
     padding: 20px; 
     min-height: 100vh;
+}
+
+.welcomeUserContainer {
+    background-color: #7B5CD0;
+    border: 1px solid #EFEFEF;
+    border-radius: 20px;
+    padding: 15px;
+    color: white;
+    margin: 25px;
+}
+
+#quickInfoContainer, #tasksInfo {
+    margin: 25px;
+    color: #212856;
+}
+
+#quickInfoContainer {
+    border: 1px solid white;
+    border-radius: 20px;
+    padding: 15px;
+    background-color: white;
+}
+
+.domainMasteryContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+.startPracticeContainer {
+    background-color: white;
+    border: 1px solid white;
+    border-radius: 20px;
+    margin: 25px;
+    padding: 15px;
+    color: #212856;
+    display: grid;
+}
+
+.startPracticeCard {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    justify-items: start;
+    border: 1px solid #c4b0f9;
+    border-radius: 20px;
+    margin: 5px;
+    gap: 10px;
+    padding: 10px 20px;
+    background-color: #E3DCF5;
+}
+
+.startPracticeCard div {
+    width: 100%;
+    text-align: left; 
 }
 
 #logout {
@@ -204,107 +259,24 @@ header {
     cursor: pointer;
 }
 
-#logout:active {
-    background-color: #2F9589;
+#logout:active { 
+    background-color: #2F9589; 
 }
 
-#quickInfoContainer {
-    margin: 25px;
-    color: #212856;
-    border-style: solid;
-    border-radius: 20px;
-    padding: 15px;
-    margin: 25px;
-    background-color: white;
-    border-color: white;
+/* Extra */
+#timeCounter {
+    margin-left: 0;
 }
 
-.domainMasteryContainer {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px;
+.highlightWord { 
+    color: #1BA599; 
 }
 
-.startPracticeContainer {
-    border-style: solid;
-    background-color: white;
-    border-color: white;
-    border-radius: 20px;
-    margin: 25px;
-    padding: 15px;
-    gap: 0;
-    color: #212856;
-    display: grid;
-    grid-template-columns: auto;
+.underlineWord { 
+    text-decoration: underline; 
+    text-decoration-color: #7B5CD0; 
 }
 
-#startPracticeEnglish {
-    border-style: solid;
-    border: none;
-    display: block;
-    margin: 20px auto;
-    color: white;
-    width: 200px;
-    padding: 10px 20px;
-    font-size: 18px;
-    background-color: #7B5CD0;
-    border-radius: 9999px;
-    font-weight: 800;
-    cursor: pointer;
-}
-
-.startPracticeCard1 {
-    border-style: solid;
-    border-color: #c4b0f9;
-    border-radius: 20px;
-    margin: 5px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    background-color: #E3DCF5;
-    justify-content: space-around;
-}
-
-.startPracticeCard2 {
-    border-style: solid;
-    border-color: #c4b0f9;
-    border-radius: 20px;
-    margin: 5px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    background-color: #E3DCF5;
-    justify-content: space-around;
-}
-
-#startPracticeMath {
-    display: block;
-    margin: 20px auto;
-    color: white;
-    border: none;
-    width: 200px;
-    padding: 10px 20px;
-    font-size: 18px;
-    background-color: #7B5CD0;
-    border-radius: 9999px;
-    font-weight: 800;
-    cursor: pointer;
-}
-
-#startPracticeEnglish:active {
-    background-color: #5C459C;
-}
-
-#startPracticeMath:active {
-    background-color: #5C459C;
-}
-
-#practiceSection {
-    background-color: #212856;
-}
 .question-box {
     border: 2px solid #333;
     padding: 20px;
@@ -316,16 +288,6 @@ header {
     text-align: center;
 }
 
-#tasksInfo {
-    color: #212856;
-    margin: 25px;
-}
-#startPractice {
-    display: flex;
-    align-items: center;
-    justify-content: center;    
-}
-
 .hidden {
-    display: none !important;
+    display: none !important; 
 }

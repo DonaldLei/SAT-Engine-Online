@@ -73,15 +73,15 @@
             <div class = "startPractice">
                 <h1 id = "tasksInfo">Your tasks for today</h1>
                 <div class = "startPracticeContainer">
-                    <div class = "startPracticeCard1">
+                    <div class = "startPracticeCard">
                         <div><p>Reading & Writing</p></div>
-                        <div><p>Questions left: </p></div>
+                        <div><p>Questions left: 0</p></div>
                         <div><button id = "startPracticeEnglish">Start</button></div>
                     </div>
 
-                    <div class = "startPracticeCard2">
+                    <div class = "startPracticeCard">
                         <div><p>Mathematics</p></div>
-                        <div><p>Questions left: </p></div>
+                        <div><p>Questions left: 0</p></div>
                         <div><button id = "startPracticeMath">Start</button></div>
                     </div>
                 </div>  
@@ -185,12 +185,36 @@
         </div>
     </div>
 
+    <div id = "userSetupSection" class = "viewApp hidden">
+        <form id = "userProfileForm">
+            <label for = "firstName">First Name:</label><br>
+            <input type = "text" id = "firstName" name = "firstName"><br>
+            <label for = "lastName">Last Name:</label><br>
+            <input type = "text" id = "lastName" name = "lastName"><br>
+            <input type = "submit" value = "Submit">
+        </form>
+    </div>
+
+    <div id = "diagnosticSection" class = "viewApp hidden">
+        <div class = "diagnosticContainer">
+        <p>Before you start your diagnostic, there are a few steps that you need to do. Go onto the College Board's Educator Question Bank website and press 
+            "Find Questions", select "SAT" for the step 1, "Reading and Writing" for step 2, check all the boxes in step 3, and then click the search button.
+            You will then be redirected to the question bank, you will see a button that says "Manage Selection", click on it and press "Select Entire Set". Then press the "Export" 
+            button and choose "No correct answers or explanations" and press the "Export PDF" button. You will then export the pdf for "With correct answers and explanations". These pdfs
+            will be where you find the question that you have been assigned using the question ID that has been provided. Simply use "CRTL" and the "F" button on your keyboard and then
+            paste the question ID in the search bar that popped up. When you are done answering the question, you will then reference the "With correct answers and explanations" pdf
+            to verify your answer and read the explanation. After that, you will come back here and answer whether or not you answered correctly. </p>
+
+        <button id = "startDiagnostic">Start Diagnostic</button>
+        </div>
+    </div> 
+
     <div id = "practiceSection" class = "viewApp hidden">
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src = "app.js"></script>
+<script src="app.js" defer></script>
 <script>
   const today = new Date();
   
