@@ -6,8 +6,8 @@ let questionAmount = 0;
 let isQuizActive = false;
 let timerInterval = null;
 let hasLeftTheScreen = false;
-let liveCounter = null;
 let startTime = null;
+let liveCounter = null;
 
 //Supabase authentication and sign up
 const SUPABASE_URL = "https://yksokqpgtusgdvnerfsc.supabase.co";
@@ -58,7 +58,24 @@ authSubmit.addEventListener("click", async () => {
         } else {
             modal.style.display = "none";
             const { data: { user } } = await client.auth.getUser();
-            await checkDiagnostic(user);
+            
+            const { data, error } = await client
+                .from('userProfiles')
+                .select('first_name, last_name')
+                .eq('id', user.id)
+                .single();
+            
+            if(error){
+                console.error("Could not fetch user: ", error);
+                return;
+            }
+            
+            if(!data.first_name && !data.last_name){
+                changeSection(userSetupSection);
+            } else {
+                changeSection(dashboardSection);
+                fetchDashboardInformation();
+            }
         }
     } else {
         const { error } = await client.auth.signUp({ email, password });
@@ -71,27 +88,28 @@ authSubmit.addEventListener("click", async () => {
     }
 });
 
-//User set up prompt
+//Welcome message
+const welcomeMessage = document.getElementById('welcomeMessage');
 
-//Check if the user has completed the diagnostic, to decide w
-async function checkDiagnostic(user){
+async function fetchName(){
+    const { data: { user } } = await client.auth.getUser();
+
     const { data, error } = await client
         .from('userProfiles')
-        .select('diagnosticCompleted')
+        .select('first_name')
         .eq('id', user.id)
         .single();
     if (error) {
-        console.error("Could not fetch profile: ", error);
+        console.error("Could not fetch name: ", error);
         return;
     }
 
-    if(data.diagnosticCompleted == false){
-        console.log("Diagnostics not completed.");
-        changeSection(userSetupSection);
-    } else {
-        changeSection(dashboardSection);
-    }
+    //Handle messages for first time users
+    const welcomeMessageOptions = data?.first_name ? `Welcome, ${data.first_name}!` : "Welcome!";
+    welcomeMessage.textContent = welcomeMessageOptions;
 }
+
+fetchName();
 
 //Section DOM
 const welcomeSection = document.getElementById('welcomeSection');
@@ -105,7 +123,7 @@ const diagnosticSection = document.getElementById('diagnosticSection');
 //Button DOM
 const enterPortalButton = document.getElementById('enterPortalButton');
 const logoutButton = document.getElementById('logout');
-const startPracticeEnglishButton = document.getElementById('startPracticeEnglish');
+const startPracticeReadingButton = document.getElementById('startPracticeReading');
 const startPracticeMathButton = document.getElementById('startPracticeMath');
 const userProfileForm = document.getElementById('userProfileForm');
 const startDiagnosticButton = document.getElementById('startDiagnostic');
@@ -143,27 +161,45 @@ userProfileForm.addEventListener('submit', async (website) => {
         .select();
 
         if(error){
-            console.log("Error: ", error);
+            console.error("Error: ", error);
             return;
         }
 
         if(data){
             console.log("Profile updated!");
-            changeSection(diagnosticSection);
+            changeSection(dashboardSection);
         } else {
             alert("Profile could not be updated!");
         }
 });
 
-startPracticeEnglishButton.addEventListener('click', async () => {
-    try {
-        const { data, error } = await client
-            .from('AllReadingQuestions')
-            .select('*');
-            questionsData = data;
+startPracticeReadingButton.addEventListener('click', async () => {
+    const { data: { user } } = await client.auth.getUser();
 
-    } catch (error) {
-        console.error("Failed to fetch questions: ", error);
+    const { data, error } = await client
+        .from('userProfiles')
+        .select('ReadingDiagnosticCompleted')
+        .eq('id', user.id)
+        .single();
+
+    if(data.ReadingDiagnosticCompleted === false){
+        try {
+            const { data, error } = await client
+                .from('diagnosticReadingQuestions')
+                .select('*');
+            questionsData = data;
+        } catch (error) {
+            console.error("Failed to fetch questions: ", error);
+        }
+    } else { //Adaptive Algorithm to be finished
+        try {
+            const { data, error } = await client
+                .from('AllReadingQuestions')
+                .select('*');
+            questionsData = data;
+        } catch (error) {
+            console.error("Failed to fetch questions: ", error);
+        }
     }
 
     isQuizActive = true;
@@ -174,29 +210,33 @@ startPracticeEnglishButton.addEventListener('click', async () => {
 });
 
 startPracticeMathButton.addEventListener('click', async () => {
-    try {
-        const { data, error } = await client
-            .from('AllMathQuestions')
-            .select('*');
-            questionsData = data;
-    } catch (error) {
-        console.error("Failed to fetch questions: ", error);
-    }
+    const { data: { user } } = await client.auth.getUser();
 
-    isQuizActive = true;
-    questionAmount = questionsData.length;
-    changeSection(practiceSection);
-    pullQuestion(questionAmount);
-});
+    const{ data, error } = await client
+        .from('userProfiles')
+        .select('MathDiagnosticCompleted')
+        .eq('id', user.id)
+        .single();
 
-startDiagnosticButton.addEventListener('click', async () => {
-    try {
-        const { data, error } = await client
-            .from('diagnosticReadingQuestions')
-            .select('*');
+    if(data.MathDiagnosticCompleted === false){
+        try {
+            const { data, error } = await client
+                .from('diagnosticMathQuestions')
+                .select('*');
             questionsData = data;
-    } catch (error) {
-        console.error("Failed to fetch questions: ", error);
+        } catch (error) {
+            console.error("Failed to fetch questions: ", error);
+        }
+    } else { //Adaptive Algorithm to be finished
+        try {
+            const { data, error } = await client
+                .from('AllMathQuestions')
+                .select('*')
+
+            questionsData = data;
+        } catch (error) {
+            console.error("Failed to fetch questions: ", error);
+        }
     }
     isQuizActive = true;
     questionAmount = questionsData.length;
@@ -208,9 +248,10 @@ startDiagnosticButton.addEventListener('click', async () => {
 document.addEventListener("visibilitychange", () => {
     if(isQuizActive && document.visibilityState == 'hidden' && !hasLeftTheScreen){
         hasLeftTheScreen = true;
-        const startTime = performance.now();
+
+        startTime = performance.now();
         const timeCounter = document.getElementById('timeCounter');
-        let liveCounter = setInterval(() => {
+        liveCounter = setInterval(() => {
             const currentTime = performance.now();
             const secondsPassed = Math.floor((currentTime - startTime) / 1000);
 
@@ -225,6 +266,9 @@ function pullQuestion(questionAmount) {
     if (currentQuestionIndex >= questionAmount) {
         isQuizActive = false;
         clearInterval(timerInterval);
+
+        //Set diagnostics to complete
+
         container.innerHTML = `
             <div class="question-box">
                 <h3>Practice Complete!</h3>
@@ -242,7 +286,8 @@ function pullQuestion(questionAmount) {
         <div class="question-box">
             <div id = "timeCounter">Time Taken: 0 seconds</div>
             <p>Question: ${currentQuestionIndex + 1} / ${questionAmount}</p>
-            <h3>${q.questionID}</h3> 
+            <h3>${q.questionID}</h3>
+            <h3>${q.questionDomain}: ${q.questionSkill}</h3> 
             <form id="quizForm">
                 <label>
                     <input type="radio" name="answer" value="Incorrect"> Incorrect
@@ -255,7 +300,7 @@ function pullQuestion(questionAmount) {
         </div>
     `;
 
-    const startTime = performance.now();
+    startTime = performance.now();
 
     const form = document.getElementById('quizForm');
     form.addEventListener('submit', async function (event) {
@@ -267,6 +312,7 @@ function pullQuestion(questionAmount) {
 
         if (liveCounter) {
             clearInterval(liveCounter);
+            liveCounter = null;
         }
 
         const formData = new FormData(form);
@@ -302,6 +348,34 @@ function pullQuestion(questionAmount) {
         }
         currentQuestionIndex++;
         hasLeftTheScreen = false;
+        startTime = null;
         pullQuestion(questionAmount);
     });
 }
+
+// User reponse analysis
+
+// async function fetchDashboardInformation(){
+//     const { data: { user } } = await client.auth.getUser();
+
+//     const { data , error } = await client
+//         .from('userResponses')
+//         .select('questionDomain, questionSkill, timeElapsed, isCorrect')
+//         .eq('user_id', user.id);
+
+//     if(error){
+//         console.error("Error fetching user responses: ", error);
+//         return;
+//     }
+
+//     console.log(data);
+
+    //Determine how many question domains there are, and for each question domain find the correctness ratio and average time taken per question
+
+
+// }
+
+
+// async function adaptiveAlgorithm(){
+
+// }

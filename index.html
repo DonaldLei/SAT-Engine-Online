@@ -66,22 +66,22 @@
         <div class = "dashboardContainer">
             <div class = "welcomeUserContainer">
                 <p><span id="current-date"></span></p>
-                <h1>Hello, Donald!</h2>
+                <h2 id = "welcomeMessage"></h2>
                 <h2>You still have # quiz(zes) to complete this week</h1>
             </div>
 
             <div class = "startPractice">
-                <h1 id = "tasksInfo">Your tasks for today</h1>
+                <h2 id = "tasksInfo">Your tasks for today</h1>
                 <div class = "startPracticeContainer">
                     <div class = "startPracticeCard">
                         <div><p>Reading & Writing</p></div>
-                        <div><p>Questions left: 0</p></div>
-                        <div><button id = "startPracticeEnglish">Start</button></div>
+                        <div><p>Build on your Reading & Writing skills here!</p></div>
+                        <div><button id = "startPracticeReading">Start</button></div>
                     </div>
 
                     <div class = "startPracticeCard">
                         <div><p>Mathematics</p></div>
-                        <div><p>Questions left: 0</p></div>
+                        <div><p>Build on your Mathematics skills here!</p></div>
                         <div><button id = "startPracticeMath">Start</button></div>
                     </div>
                 </div>  
@@ -90,13 +90,11 @@
             <div id = "quickInfoContainer">
                 <h2>Quick Information</h2>
                 <div class = "quickInfoStatistics">
-                    <p>You have completed ()% of all the questions in our database. Keep up the good work!</p>
-                    <hr>
                     <p>Top 3 Reading & Writing Topics to Improve:</p>
                     <p>Top 3 Mathematics Topics to Improve:</p>
                 </div>
             </div>
-            <div class = "domainMasteryContainer">
+            <!-- <div class = "domainMasteryContainer">
                 <div id = "domainMasteryReadingContainer">
                     <p>Reading and Writing</p>
                     <details>
@@ -181,16 +179,17 @@
                     </details>
 
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 
     <div id = "userSetupSection" class = "viewApp hidden">
         <form id = "userProfileForm">
+            <h1>Set up your profile:</h1>
             <label for = "firstName">First Name:</label><br>
-            <input type = "text" id = "firstName" name = "firstName"><br>
+            <input type = "text" id = "firstName" name = "firstName" required><br>
             <label for = "lastName">Last Name:</label><br>
-            <input type = "text" id = "lastName" name = "lastName"><br>
+            <input type = "text" id = "lastName" name = "lastName" required><br>
             <input type = "submit" value = "Submit">
         </form>
     </div>
@@ -201,7 +200,7 @@
             "Find Questions", select "SAT" for the step 1, "Reading and Writing" for step 2, check all the boxes in step 3, and then click the search button.
             You will then be redirected to the question bank, you will see a button that says "Manage Selection", click on it and press "Select Entire Set". Then press the "Export" 
             button and choose "No correct answers or explanations" and press the "Export PDF" button. You will then export the pdf for "With correct answers and explanations". These pdfs
-            will be where you find the question that you have been assigned using the question ID that has been provided. Simply use "CRTL" and the "F" button on your keyboard and then
+            will be where you find the question that you have been assigned using the question ID that has been provided. Simply press the "CRTL" and the "F" button on your keyboard at the same time and then
             paste the question ID in the search bar that popped up. When you are done answering the question, you will then reference the "With correct answers and explanations" pdf
             to verify your answer and read the explanation. After that, you will come back here and answer whether or not you answered correctly. </p>
 

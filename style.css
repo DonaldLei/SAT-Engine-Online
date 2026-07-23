@@ -21,6 +21,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 80vh;
+    gap: 4px;
 }
 
 #authenticationSection { 
@@ -87,7 +88,7 @@ header {
 }
 
 /* Buttons */
-#enterPortalButton, #login, #startPracticeEnglish, #startPracticeMath {
+#enterPortalButton, #login, #startPracticeReading, #startPracticeMath, #signup {
     width: 200px;
     padding: 15px 6px;
     font-size: 18px;
@@ -103,14 +104,14 @@ header {
     background-color: #2F9589; 
 }
 
-#startPracticeEnglish, #startPracticeMath {
+#startPracticeReading, #startPracticeMath {
     background-color: #7B5CD0;
     margin: 20px auto;
     display: block;
     padding: 10px 20px;
 }
 
-#startPracticeEnglish:active, #startPracticeMath:active { 
+#startPracticeReading:active, #startPracticeMath:active { 
     background-color: #5C459C; 
 }
 
@@ -209,12 +210,12 @@ header {
     background-color: white;
 }
 
-.domainMasteryContainer {
+/* .domainMasteryContainer {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-}
+} */
 
 .startPracticeContainer {
     background-color: white;
