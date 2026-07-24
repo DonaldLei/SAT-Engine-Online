@@ -74,7 +74,24 @@ authSubmit.addEventListener("click", async () => {
                 changeSection(userSetupSection);
             } else {
                 changeSection(dashboardSection);
-                fetchDashboardInformation();
+                const userStatistics = await fetchDashboardInformation();
+                const quickInformation = document.getElementById('skillsList');
+
+                let temporaryTextHolder = '';
+
+                for(let i = 0; i < userStatistics.length; i++){
+                    const statistics = userStatistics[i];
+
+                    temporaryTextHolder += `
+                        <div class = "skillsCard">
+                            <ol>
+                                <li><p>${statistics.domainName} | Accuracy: ${statistics.domainAccuracy}% | Average time taken: ${statistics.domainAverageTimeElapsed} seconds</p></li>
+                            </ol>
+                        </div>
+                    `
+                }
+
+                quickInformation.innerHTML = temporaryTextHolder;
             }
         }
     } else {
@@ -89,7 +106,6 @@ authSubmit.addEventListener("click", async () => {
 });
 
 //Welcome message
-const welcomeMessage = document.getElementById('welcomeMessage');
 
 async function fetchName(){
     const { data: { user } } = await client.auth.getUser();
@@ -142,6 +158,11 @@ function changeSection(nextSection){
 enterPortalButton.addEventListener('click', () => {
     changeSection(authenticationSection);
 }); 
+
+document.getElementById('backToWelcome').addEventListener('click', () => {
+    modal.style.display = 'none';
+    changeSection(welcomeSection);
+});
 
 userProfileForm.addEventListener('submit', async (website) => {
     website.preventDefault();
@@ -260,14 +281,34 @@ document.addEventListener("visibilitychange", () => {
     }
 });
 
-function pullQuestion(questionAmount) {
+async function pullQuestion(questionAmount) {
     const container = document.getElementById('practiceSection');
 
     if (currentQuestionIndex >= questionAmount) {
         isQuizActive = false;
-        clearInterval(timerInterval);
+        clearInterval(liveCounter);
 
-        //Set diagnostics to complete
+        const { data: { user } } = await client.auth.getUser();
+
+        const { data, error } = await client
+            .from('userProfiles')
+            .select('ReadingDiagnosticCompleted')
+            .eq('id', user.id)
+            .single();
+
+        if(data.ReadingDiagnosticCompleted === false){
+            const { data, error } = await client
+                .from('userProfiles')
+                .update({ ReadingDiagnosticCompleted: true })
+                .eq('id', user.id)
+        }
+
+        if (data.MathDiagnosticCompleted === false) {
+            const { data, error } = await client
+                .from('userProfiles')
+                .update({MathDiagnosticCompleted: true })
+                .eq('id', user.id)
+        }
 
         container.innerHTML = `
             <div class="question-box">
@@ -355,25 +396,56 @@ function pullQuestion(questionAmount) {
 
 // User reponse analysis
 
-// async function fetchDashboardInformation(){
-//     const { data: { user } } = await client.auth.getUser();
+async function fetchDashboardInformation(){
+    const { data: { user } } = await client.auth.getUser();
 
-//     const { data , error } = await client
-//         .from('userResponses')
-//         .select('questionDomain, questionSkill, timeElapsed, isCorrect')
-//         .eq('user_id', user.id);
+    //Fetch all questions that the user has answered
+    const { data , error } = await client
+        .from('userResponses')
+        .select('questionDomain, questionSkill, timeElapsed, isCorrect')
+        .eq('id', user.id);
 
-//     if(error){
-//         console.error("Error fetching user responses: ", error);
-//         return;
-//     }
+    if(error){
+        console.error("Error fetching user responses: ", error);
+        return;
+    }
+    
+    const questionMap = {};
 
-//     console.log(data);
+    for(const item of data){
+        const questionDomainName = item.questionDomain;
+        
+        if(!questionMap[questionDomainName]){
+            questionMap[questionDomainName] = {
+                domainName: questionDomainName,
+                totalQuestions: 0,
+                correctCount: 0,
+                totalTimeElapsed: 0
+            };
+        }
 
-    //Determine how many question domains there are, and for each question domain find the correctness ratio and average time taken per question
+        const questionGroup = questionMap[questionDomainName];
+        questionGroup.totalQuestions += 1;
+        questionGroup.correctCount += item.isCorrect ? 1 : 0;
+        questionGroup.totalTimeElapsed += item.timeElapsed;
+    }
 
+    const userStatistics = [];  
+    for(const key in questionMap){
+        const questionGroup = questionMap[key];
+        
+        questionGroup.domainName = (questionGroup.domainName);
+        questionGroup.domainAccuracy = (questionGroup.correctCount / questionGroup.totalQuestions) * 100;
+        questionGroup.domainAverageTimeElapsed = (questionGroup.totalTimeElapsed / questionGroup.totalQuestions);
 
-// }
+        userStatistics.push(questionGroup);
+    }
+
+    userStatistics.sort((a, b) => a.domainAccuracy - b.domainAccuracy);
+
+    return userStatistics;
+}
+
 
 
 // async function adaptiveAlgorithm(){
