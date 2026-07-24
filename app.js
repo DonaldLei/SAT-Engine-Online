@@ -141,7 +141,12 @@ function changeSection(nextSection){
 
 enterPortalButton.addEventListener('click', () => {
     changeSection(authenticationSection);
-}); 
+});
+
+document.getElementById('backToWelcome').addEventListener('click', () => {
+    modal.style.display = 'none';
+    changeSection(welcomeSection);
+});
 
 userProfileForm.addEventListener('submit', async (website) => {
     website.preventDefault();
