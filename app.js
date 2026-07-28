@@ -239,7 +239,6 @@ scheduleTestDate.addEventListener('submit', async (event) => {
             scheduleDate: testDateScheduled,
             // studentFirstName: userName.first_name,
             // studentLastName: userName.last_name
-            //Include first and last name, 
         }]);
 
     if (error) {
@@ -272,6 +271,7 @@ document.querySelector('.mainTabs').addEventListener('click', async (event) => {
         }
     }
 });
+
 startPracticeReadingButton.addEventListener('click', async () => {
     const { data: { user } } = await client.auth.getUser();
 
@@ -305,7 +305,6 @@ startPracticeReadingButton.addEventListener('click', async () => {
     questionAmount = questionsData.length;
     changeSection(practiceSection);
     pullQuestion(questionAmount);
-
 });
 
 startPracticeMathButton.addEventListener('click', async () => {
@@ -388,14 +387,19 @@ async function pullQuestion(questionAmount) {
                 .eq('id', user.id)
         }
 
+
         container.innerHTML = `
             <div class="question-box">
                 <h3>Practice Complete!</h3>
                 <h2>Questions Correct: ${questionCorrect}</h2>
                 <h2>Questions Incorrect: ${questionIncorrect}</h2>
-                <button onclick="location.reload()">Back</button>
+                <button id = "backToDashboard">Back</button>
             </div>
         `;
+
+        document.getElementById('backToDashboard').addEventListener('click', () => {
+            changeSection(dashboardSection);
+        });
         return;
     }
 
