@@ -82,28 +82,30 @@ authSubmit.addEventListener("click", async () => {
                 let temporaryTextHolder1 = '';
                 let temporaryTextHolder2 = '';
 
-                for(let i = 0; i < userStatistics.English.length; i++){
+                for(let i = 0; i < 3; i++){
                     const statistics = userStatistics.English[i];
-
+                    
                     temporaryTextHolder1 += `
                         <div class = "skillsListReading">
-                            <ol>
+                            <ul>
                                 <li><p>${statistics.domainName} | Accuracy: ${statistics.domainAccuracy}% | Average time taken: ${statistics.domainAverageTimeElapsed} seconds</p></li>
-                            </ol>
+                            </ul>
                         </div>
                     `
                 }
 
                 quickInformationEnglish.innerHTML = temporaryTextHolder1;
                 
-                for(let i = 0; i < userStatistics.Mathematics.length; i++){
+                for(let i = 0; i < 3; i++){
                     const statistics = userStatistics.Mathematics[i];
 
+                    let html = `<div class = "skillsListMathematics"><ol>
+                    `
                     temporaryTextHolder2 += `
                         <div class = "skillsListMathematics">
-                            <ol>
+                            <ul>
                                 <li><p>${statistics.domainName} | Accuracy: ${statistics.domainAccuracy}% | Average time taken: ${statistics.domainAverageTimeElapsed} seconds</p></li>
-                            </ol>
+                            </ul>
                         </div>
                     `
                 }
@@ -400,6 +402,7 @@ async function pullQuestion(questionAmount) {
         document.getElementById('backToDashboard').addEventListener('click', () => {
             changeSection(dashboardSection);
         });
+        
         return;
     }
 
