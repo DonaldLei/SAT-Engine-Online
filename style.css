@@ -19,6 +19,19 @@ body {
     font-family: 'Lexend', sans-serif;
     overscroll-behavior: none;
 }
+/* set up user profile */
+#userProfileForm {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+}
+
+#chooseGrade {
+    display: flex;
+    gap: 2px;
+}
 
 /* Sections */
 #welcomeSection, #authenticationSection {
@@ -42,6 +55,38 @@ body {
     display: flex;
     align-items: flex-start;
     background-color: #212856;
+}
+
+#scheduleTestSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #EFEFEF;
+}
+
+.scheduleRequests {
+    border-style: solid;
+    border-radius: 20px;
+    background-color: white;
+    border-color: white;
+}
+
+.scheduleRequests h2 {
+    text-decoration: underline;
+}
+
+#scheduleRequestsContainer {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    justify-items: start;
+    border: 1px solid #c4b0f9;
+    border-radius: 20px;
+    margin: 5px;
+    gap: 10px;
+    padding: 10px 20px;
+    background-color: #E3DCF5;
 }
 
 .landingPageHeader {
@@ -164,8 +209,8 @@ header {
     gap: 1px;
 }
 
-.mainTabs .menuButton:nth-child(4) { 
-    margin-top: 320px; 
+.mainTabs .menuButton:nth-child(5) { 
+    margin-top: 295px; 
 }
 
 .menuButton {
@@ -198,6 +243,11 @@ header {
     min-height: 100vh;
 }
 
+/* .dashboardContainer h1 {
+    margin: 5px;
+    padding: 10px 20px;
+} */
+
 .welcomeUserContainer {
     background-color: #7B5CD0;
     border: 1px solid #EFEFEF;
@@ -218,13 +268,6 @@ header {
     padding: 15px;
     background-color: white;
 }
-
-/* .domainMasteryContainer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-} */
 
 .startPracticeContainer {
     background-color: white;

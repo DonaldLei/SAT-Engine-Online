@@ -73,17 +73,20 @@ authSubmit.addEventListener("click", async () => {
             if(!data.first_name && !data.last_name){
                 changeSection(userSetupSection);
             } else {
+                fetchName();
                 changeSection(dashboardSection);
                 const userStatistics = await fetchDashboardInformation();
-                const quickInformation = document.getElementById('skillsList');
+                const quickInformationEnglish = document.getElementById('skillsListReading');
+                const quickInformationMathematics = document.getElementById('skillsListMathematics');
 
-                let temporaryTextHolder = '';
+                let temporaryTextHolder1 = '';
+                let temporaryTextHolder2 = '';
 
-                for(let i = 0; i < userStatistics.length; i++){
-                    const statistics = userStatistics[i];
+                for(let i = 0; i < userStatistics.English.length; i++){
+                    const statistics = userStatistics.English[i];
 
-                    temporaryTextHolder += `
-                        <div class = "skillsCard">
+                    temporaryTextHolder1 += `
+                        <div class = "skillsListReading">
                             <ol>
                                 <li><p>${statistics.domainName} | Accuracy: ${statistics.domainAccuracy}% | Average time taken: ${statistics.domainAverageTimeElapsed} seconds</p></li>
                             </ol>
@@ -91,7 +94,21 @@ authSubmit.addEventListener("click", async () => {
                     `
                 }
 
-                quickInformation.innerHTML = temporaryTextHolder;
+                quickInformationEnglish.innerHTML = temporaryTextHolder1;
+                
+                for(let i = 0; i < userStatistics.Mathematics.length; i++){
+                    const statistics = userStatistics.Mathematics[i];
+
+                    temporaryTextHolder2 += `
+                        <div class = "skillsListMathematics">
+                            <ol>
+                                <li><p>${statistics.domainName} | Accuracy: ${statistics.domainAccuracy}% | Average time taken: ${statistics.domainAverageTimeElapsed} seconds</p></li>
+                            </ol>
+                        </div>
+                    `
+                }
+                
+                quickInformationMathematics.innerHTML = temporaryTextHolder2;
             }
         }
     } else {
@@ -112,20 +129,19 @@ async function fetchName(){
 
     const { data, error } = await client
         .from('userProfiles')
-        .select('first_name')
+        .select('first_name, last_name')
         .eq('id', user.id)
         .single();
     if (error) {
         console.error("Could not fetch name: ", error);
+        changeSection(userSetupSection);
         return;
     }
 
-    //Handle messages for first time users
-    const welcomeMessageOptions = data?.first_name ? `Welcome, ${data.first_name}!` : "Welcome!";
+    const welcomeMessage = document.getElementById('welcomeMessage');
+    const welcomeMessageOptions = `Welcome, ${data.first_name}!`;
     welcomeMessage.textContent = welcomeMessageOptions;
 }
-
-fetchName();
 
 //Section DOM
 const welcomeSection = document.getElementById('welcomeSection');
@@ -133,7 +149,7 @@ const authenticationSection = document.getElementById('authenticationSection');
 const dashboardSection = document.getElementById('dashboardSection');
 const practiceSection = document.getElementById('practiceSection');
 const userSetupSection = document.getElementById('userSetupSection');
-const diagnosticSection = document.getElementById('diagnosticSection');
+const scheduleTestSection = document.getElementById('scheduleTestSection');
 
 
 //Button DOM
@@ -142,7 +158,8 @@ const logoutButton = document.getElementById('logout');
 const startPracticeReadingButton = document.getElementById('startPracticeReading');
 const startPracticeMathButton = document.getElementById('startPracticeMath');
 const userProfileForm = document.getElementById('userProfileForm');
-const startDiagnosticButton = document.getElementById('startDiagnostic');
+const menuButtons = document.querySelectorAll('.menuButtons');
+const scheduleTestDate = document.getElementById('scheduleTestDate');
 
 function changeSection(nextSection){
     welcomeSection.classList.add('hidden');
@@ -150,8 +167,8 @@ function changeSection(nextSection){
     dashboardSection.classList.add('hidden');
     practiceSection.classList.add('hidden');
     userSetupSection.classList.add('hidden');
-    diagnosticSection.classList.add('hidden');
-
+    scheduleTestSection.classList.add('hidden');
+    
     nextSection.classList.remove('hidden');
 }
 
@@ -164,20 +181,25 @@ document.getElementById('backToWelcome').addEventListener('click', () => {
     changeSection(welcomeSection);
 });
 
-userProfileForm.addEventListener('submit', async (website) => {
-    website.preventDefault();
+userProfileForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-    const firstName = document.getElementById('firstName').value;
-    const lastName = document.getElementById('lastName').value;
+    const formData = new FormData(event.target);
 
+    const userProfileData = {
+        first_name: formData.get('firstName'),
+        last_name: formData.get('lastName'),
+        currentGrade: formData.get('gradeLevel'),
+        targetApplicationDeadline: formData.get('deadline'),
+        satAttempts: formData.get('satAttempts'),
+        currentScore: formData.get('currentScore')
+    }
+    
     const { data: { user } } = await client.auth.getUser();
 
     const { data, error } = await client
         .from('userProfiles')
-        .update({
-            first_name: firstName,
-            last_name: lastName
-        })
+        .update(userProfileData)
         .eq('id', user.id)
         .select();
 
@@ -189,11 +211,67 @@ userProfileForm.addEventListener('submit', async (website) => {
         if(data){
             console.log("Profile updated!");
             changeSection(dashboardSection);
+            fetchName();
         } else {
             alert("Profile could not be updated!");
         }
 });
 
+//Insert new scheduling into the database for tutors, can only send one request at a time, will only display one request
+//Problem: Cannot reference a column that is not unique. Could only reference the id and then update the row later using the id. 
+scheduleTestDate.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    
+    const formData = new FormData(event.target);
+
+    const testDateScheduled = formData.get('testDate');
+
+    const { data: { user } } = await client.auth.getUser();
+
+    const userName = await fetchName();
+
+    console.log(userName);
+
+    const { data, error } = await client
+        .from('studentRequests')
+        .insert([{
+            studentID: user.id,
+            scheduleDate: testDateScheduled,
+            // studentFirstName: userName.first_name,
+            // studentLastName: userName.last_name
+            //Include first and last name, 
+        }]);
+
+    if (error) {
+        console.error("Error: ", error);
+        return;
+    }
+
+    if(data){
+        alert("Scheduled test has been requested."); 
+    } else {
+        alert("Scheduled test has been requested.");
+    }
+});
+
+document.querySelector('.mainTabs').addEventListener('click', async (event) => {
+    if (event.target.classList.contains('menuButton')) {
+        const target = event.target.dataset.target;
+
+        if (target === 'logout') {
+            await client.auth.signOut();
+            changeSection(welcomeSection);
+            return;
+        }
+
+        const section = document.getElementById(target);
+        if (section) {
+            changeSection(section);
+        } else {
+            console.warn("Could not change section");
+        }
+    }
+});
 startPracticeReadingButton.addEventListener('click', async () => {
     const { data: { user } } = await client.auth.getUser();
 
@@ -381,7 +459,8 @@ async function pullQuestion(questionAmount) {
                 questionSkill: q.questionSkill,
                 difficulty: q.questionDifficulty,
                 timeElapsed: totalSeconds,
-                isCorrect: isCorrectBoolean
+                isCorrect: isCorrectBoolean,
+                subject: q.subject
             }]);
 
         if (error) {
@@ -402,21 +481,25 @@ async function fetchDashboardInformation(){
     //Fetch all questions that the user has answered
     const { data , error } = await client
         .from('userResponses')
-        .select('questionDomain, questionSkill, timeElapsed, isCorrect')
+        .select('subject, questionDomain, questionSkill, timeElapsed, isCorrect')
         .eq('id', user.id);
 
     if(error){
         console.error("Error fetching user responses: ", error);
         return;
     }
-    
-    const questionMap = {};
+
+    const questionMap = {
+        English: {},
+        Mathematics: {}
+    };
 
     for(const item of data){
         const questionDomainName = item.questionDomain;
+        const questionSubject = item.subject;
         
-        if(!questionMap[questionDomainName]){
-            questionMap[questionDomainName] = {
+        if(!questionMap[questionSubject][questionDomainName]){
+            questionMap[questionSubject][questionDomainName] = {
                 domainName: questionDomainName,
                 totalQuestions: 0,
                 correctCount: 0,
@@ -424,30 +507,41 @@ async function fetchDashboardInformation(){
             };
         }
 
-        const questionGroup = questionMap[questionDomainName];
+        const questionGroup = questionMap[questionSubject][questionDomainName];
         questionGroup.totalQuestions += 1;
         questionGroup.correctCount += item.isCorrect ? 1 : 0;
         questionGroup.totalTimeElapsed += item.timeElapsed;
     }
 
-    const userStatistics = [];  
-    for(const key in questionMap){
-        const questionGroup = questionMap[key];
+    const userStatistics = { English: [], Mathematics: [] };  
+    for(const questionSubject in questionMap){
+        for(const questionDomain in questionMap[questionSubject]){
+            const questionGroup = questionMap[questionSubject][questionDomain];
         
-        questionGroup.domainName = (questionGroup.domainName);
-        questionGroup.domainAccuracy = (questionGroup.correctCount / questionGroup.totalQuestions) * 100;
-        questionGroup.domainAverageTimeElapsed = (questionGroup.totalTimeElapsed / questionGroup.totalQuestions);
+            questionGroup.domainName = (questionGroup.domainName);
+            questionGroup.domainAccuracy = Math.round((questionGroup.correctCount / questionGroup.totalQuestions) * 100);
+            questionGroup.domainAverageTimeElapsed = Math.round(questionGroup.totalTimeElapsed / questionGroup.totalQuestions);
 
-        userStatistics.push(questionGroup);
+            userStatistics[questionSubject].push(questionGroup);
+        }
+
+        userStatistics[questionSubject].sort((a, b) => a.domainAccuracy - b.domainAccuracy);
     }
-
-    userStatistics.sort((a, b) => a.domainAccuracy - b.domainAccuracy);
 
     return userStatistics;
 }
 
+//Basic walkthrough explanation of the adaptive algorithm process
+//1. Pull all question responses from the current user
+//2. If the diagnostic questions have been completed, you have to cross reference from the user responses 
+//to what questions that have been fetched. 
+//How do we decide what questions to fetch? Decide based on the statistics (their accuracy), however we also have to fetch other questions
+//so the student doesn't only have to do one domain of questions. 
+
 
 
 // async function adaptiveAlgorithm(){
+//     const { data: { user } } = await client.auth.getUser();
 
 // }
+

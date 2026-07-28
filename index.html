@@ -24,8 +24,6 @@
                     to the student.
                 </p>
             </div>
-<!-- 
-                <hr class = "verticalLineSeparator"> -->
 
             <div class = "enterPortal">
                 <p>Begin your journey to <span class = "highlightWord">success</span></p>
@@ -56,11 +54,13 @@
             <h1>ClearPillar</h1>
 
             <nav class = "mainTabs">
-                <button class = "menuButton">Dashboard</button>
+                <button class = "menuButton" data-target = "dashboardSection">Dashboard</button>
+                <button class = "menuButton">Profile</button>
                 <button class = "menuButton">Statistics</button> 
-                <button class = "menuButton">Work Completed</button>
-                <button class = "menuButton">Settings</button>
-                <button class = "menuButton">Logout</button>
+                <button class = "menuButton" data-target = "scheduleTestSection">Schedule Test Request</button>
+                <button class = "menuButton">Messages</button>
+                <!-- <button class = "menuButton">Settings</button> -->
+                <button class = "menuButton" data-target = "welcomeSection">Logout</button>
             </nav>
         </div>
 
@@ -90,112 +90,54 @@
             
             <div id = "quickInfoContainer">
                 <h2>Quick Information</h2>
-                <div class = "quickInfoStatistics">
-                    <h3>Top 3 SAT Skills to Improve:</h3>
-                    <div id = "skillsList"></div>
+                <div class = "quickInfoReading">
+                    <h3>Top 3 Reading & English Skills to Improve:</h3>
+                    <div id = "skillsListReading"></div>
+                </div>
+
+                <div class = "quickInfoMathematics">
+                    <h3>Top 3 Mathematics Skills to Improve:</h3>
+                    <div id = "skillsListMathematics"></div>
                 </div>
             </div>
-            <!-- <div class = "domainMasteryContainer">
-                <div id = "domainMasteryReadingContainer">
-                    <p>Reading and Writing</p>
-                    <details>
-                        <summary>Information and Ideas</summary>
-                        <ul>
-                            <li>Central Ideas and Details</li>
-                            <li>Inferences</li>
-                            <li>Command of Evidence</li>
-                        </ul>
-                    </details>
-
-                    <details>
-                        <summary>Craft and Structure</summary>
-                            <ul>
-                                <li>Words in Context</li>
-                                <li>Text Structure in Purpose</li>
-                                <li>Cross-Text Connection</li>
-                            </ul>
-                    </details>
-                    
-                    <details>
-                        <summary>Expression of Ideas</summary>
-                            <ul>
-                                <li>Rhetorical Synthesis</li>
-                                <li>Transitions</li>
-                            </ul>
-                    </details>
-
-                    <details>
-                        <summary>Standard English Conventions</summary>
-                            <ul>
-                                <li>Boundaries</li>
-                                <li>Form, Structure, and Sense</li>
-                            </ul>
-                    </details>
-                </div>
-
-                <div id = "domainMasteryMathContainer">
-                    <p>Math</p>
-                    <details>
-                        <summary>Algebra</summary>
-                            <ul>
-                                <li>Linear equations in one variable</li>
-                                <li>Linear functions</li>
-                                <li>Linear equations in two variables</li>
-                                <li>Systems of two linear equations in two variables</li>
-                                <li>Linear inequalities in one or two variables</li>
-                            </ul>
-                    </details>
-
-                    <details>
-                        <summary>Advanced Algebra</summary>
-                            <ul>
-                                <li>Nonlinear functions</li>
-                                <li>Nonlinear equations in one variable</li>
-                                <li>Systems of equations in two variables</li>
-                                <li>Equivalent expressions</li>
-                            </ul>
-                    </details>
-
-                    <details>
-                        <summary>Problem-Solving and Data Analysis</summary>
-                            <ul>
-                                <li>Ratios, rates, proportional relationships, and units</li>
-                                <li>Percentages</li>
-                                <li>One-variable data: Distributions and measures of center and spread</li>
-                                <li>Two-variable data: Models and scatterplots</li>
-                                <li>Probability and conditional probability</li>
-                                <li>Inference from sample statistics and margin of error</li>
-                                <li>Evaluating statistical claims: Observational studies and experiments</li>
-                            </ul>
-                    </details>
-
-                    <details>
-                        <summary>Geometry and Trigonometry</summary>
-                            <ul>
-                                <li>Area and volume</li>
-                                <li>Lines, angles, and triangles</li>
-                                <li>Right triangles and trigonometry</li>
-                                <li>Circles</li>
-                            </ul>
-                    </details>
-
-                </div>
-            </div> -->
         </div>
     </div>
 
     <div id = "userSetupSection" class = "viewApp hidden">
         <form id = "userProfileForm">
             <h1>Set up your profile:</h1>
-            <label for = "firstName">First Name:</label><br>
-            <input type = "text" id = "firstName" name = "firstName" required><br>
-            <label for = "lastName">Last Name:</label><br>
-            <input type = "text" id = "lastName" name = "lastName" required><br>
+
+            <div id = "setProfileName">
+                <label for = "firstName">First Name:</label><br>
+                <input type = "text" id = "firstName" name = "firstName" required><br>
+                <label for = "lastName">Last Name:</label><br>
+                <input type = "text" id = "lastName" name = "lastName" required><br>
+            </div>
+
+            <p>Current grade level:</p>
+
+            <div id = "chooseGrade">
+                <input type = "radio" id = "grade9" name = "gradeLevel" value = "9" required>
+                <label for = "9th Grade">9th Grade</label><br>
+                <input type = "radio" id = "grade10" name = "gradeLevel" value = "10">
+                <label for = "10th Grade">10th Grade</label><br>
+                <input type = "radio" id = "grade11" name = "gradeLevel" value = "11">
+                <label for = "11th Grade">11th Grade</label><br>
+                <input type= "radio" id = "grade12" name = "gradeLevel" value = "12">
+                <label for="12th Grade">12th Grade</label><br>
+            </div>
+
+            <label for = "applicationDeadline">Target college application deadline:</label>
+            <input type = "date" id = "applicationDeadline" name = "deadline"></input>
+            <label for = "satAttempts">Number of SAT attempts (0-3):</label><br>
+            <input type = "number" min = "0" max = "3" id = "satAttempts" name = "satAttempts" required><br>
+            <label for = "currentScore">Current Score:</label><br>
+            <input type = "number" id = "currentScore" name = "currentScore" required><br>
             <input type = "submit" value = "Submit">
         </form>
     </div>
 
-    <div id = "diagnosticSection" class = "viewApp hidden">
+    <!-- <div id = "diagnosticSection" class = "viewApp hidden">
         <div class = "diagnosticContainer">
         <p>Before you start your diagnostic, there are a few steps that you need to do. Go onto the College Board's Educator Question Bank website and press 
             "Find Questions", select "SAT" for the step 1, "Reading and Writing" for step 2, check all the boxes in step 3, and then click the search button.
@@ -207,11 +149,30 @@
 
         <button id = "startDiagnostic">Start Diagnostic</button>
         </div>
-    </div> 
+    </div>  -->
 
     <div id = "practiceSection" class = "viewApp hidden">
     </div>
 </div>
+
+    <div id = "scheduleTestSection" class = "viewApp hidden">
+        <h1>Schedule your next SAT date</h1>
+        <p>Send a request to your tutor to confirm your test scheduling.</p>
+        <form id = scheduleTestDate>
+            <label for = "testDate">Next test date:</label>
+            <input type = "date" id = "testDate" name = "testDate"></input>
+            <input type = "submit" value = "Submit">
+        </form>
+
+        <div class = "scheduleRequests">
+            <h2>Your schedule requests:</h2>
+            <div id = "scheduleRequestsContainer">
+                <div><p>Scheduled date:</p></div>
+                <div><p>Status:</p></div>
+                <div><p>Comment:</p></div>
+            </div>
+        </div>
+    </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type = "module" src="app.js" defer></script>
