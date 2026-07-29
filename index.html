@@ -68,7 +68,7 @@
             <div class = "welcomeUserContainer">
                 <p><span id="current-date"></span></p>
                 <h2 id = "welcomeMessage"></h2>
-                <h2>You still have # quiz(zes) to complete this week</h1>
+                <h3>Continue your work!</h3>
             </div>
 
             <div class = "startPractice">
@@ -76,13 +76,13 @@
                 <div class = "startPracticeContainer">
                     <div class = "startPracticeCard">
                         <div><p>Reading & Writing</p></div>
-                        <div><p>Build on your Reading & Writing skills here!</p></div>
+                        <div><p id = "readingPracticeDescription">Build on your Reading & Writing skills here!</p></div>
                         <div><button id = "startPracticeReading">Start</button></div>
                     </div>
 
                     <div class = "startPracticeCard">
                         <div><p>Mathematics</p></div>
-                        <div><p>Build on your Mathematics skills here!</p></div>
+                        <div><p id = "mathPracticeDescription">Build on your Mathematics skills here!</p></div>
                         <div><button id = "startPracticeMath">Start</button></div>
                     </div>
                 </div>  
@@ -137,19 +137,19 @@
         </form>
     </div>
 
-    <!-- <div id = "diagnosticSection" class = "viewApp hidden">
+    <div id = "diagnosticSection" class = "viewApp hidden">
         <div class = "diagnosticContainer">
-        <p>Before you start your diagnostic, there are a few steps that you need to do. Go onto the College Board's Educator Question Bank website and press 
-            "Find Questions", select "SAT" for the step 1, "Reading and Writing" for step 2, check all the boxes in step 3, and then click the search button.
+        <p>Before you start your diagnostic, there are a few steps that you need to do. Go onto the <a href = "https://satsuiteeducatorquestionbank.collegeboard.org/" target="_blank">College Board's Educator Question Bank</a> website and press 
+            "Find Questions", select "SAT" for the step 1, the current subject you're doing for this diagnostic for step 2, check all the boxes in step 3, and then click the search button.
             You will then be redirected to the question bank, you will see a button that says "Manage Selection", click on it and press "Select Entire Set". Then press the "Export" 
             button and choose "No correct answers or explanations" and press the "Export PDF" button. You will then export the pdf for "With correct answers and explanations". These pdfs
             will be where you find the question that you have been assigned using the question ID that has been provided. Simply press the "CRTL" and the "F" button on your keyboard at the same time and then
-            paste the question ID in the search bar that popped up. When you are done answering the question, you will then reference the "With correct answers and explanations" pdf
-            to verify your answer and read the explanation. After that, you will come back here and answer whether or not you answered correctly. </p>
+            paste the question ID in the search bar that appears on the top right of your screen. When you are done answering the question, you will then reference the "With correct answers and explanations" pdf
+            to verify your answer and read the explanation by using the same "CRTL" and "F" search method. After that, you will come back here and answer whether or not you answered correctly. </p>
 
         <button id = "startDiagnostic">Start Diagnostic</button>
         </div>
-    </div>  -->
+    </div> 
 
     <div id = "practiceSection" class = "viewApp hidden">
     </div>
@@ -167,9 +167,9 @@
         <div class = "scheduleRequests">
             <h2>Your schedule requests:</h2>
             <div id = "scheduleRequestsContainer">
-                <div><p>Scheduled date:</p></div>
-                <div><p>Status:</p></div>
-                <div><p>Comment:</p></div>
+                <div><p id = scheduledDateText>Scheduled date:</p></div>
+                <div><p id = scheduledDateStatus>Status:</p></div>
+                <div><p id = scheduledDateComment>Comment:</p></div>
             </div>
         </div>
     </div>
