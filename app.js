@@ -22,6 +22,57 @@ const authSubmit = document.getElementById("authSubmit");
 const authError = document.getElementById("authError");
 let currentMode;
 
+// Handle password reset redirect from Supabase email link
+client.auth.onAuthStateChange((event, session) => {
+    if (event === 'PASSWORD_RECOVERY') {
+        const resetPasswordModal = document.getElementById("resetPasswordModal");
+        document.getElementById("resetModalTitle").textContent = "Set New Password";
+        document.getElementById("resetModalSubtitle").textContent = "Enter and confirm your new password.";
+        document.getElementById("resetEmailStep").style.display = "none";
+        document.getElementById("resetNewPasswordStep").style.display = "block";
+        document.getElementById("resetMessage").textContent = "";
+        resetPasswordModal.style.display = "flex";
+    }
+});
+
+document.getElementById("updatePasswordSubmit")?.addEventListener("click", async () => {
+    const newPassword = document.getElementById("newPassword").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    const resetMessage = document.getElementById("resetMessage");
+
+    if (!newPassword || !confirmPassword) {
+        resetMessage.style.color = "red";
+        resetMessage.textContent = "Please fill in both fields.";
+        return;
+    }
+
+    if (newPassword !== confirmPassword) {
+        resetMessage.style.color = "red";
+        resetMessage.textContent = "Passwords do not match.";
+        return;
+    }
+
+    if (newPassword.length < 6) {
+        resetMessage.style.color = "red";
+        resetMessage.textContent = "Password must be at least 6 characters.";
+        return;
+    }
+
+    const { error } = await client.auth.updateUser({ password: newPassword });
+    if (error) {
+        resetMessage.style.color = "red";
+        resetMessage.textContent = error.message;
+    } else {
+        resetMessage.style.color = "green";
+        resetMessage.textContent = "Password updated! Please log in.";
+        await client.auth.signOut();
+        setTimeout(() => {
+            document.getElementById("resetPasswordModal").style.display = "none";
+            changeSection(welcomeSection);
+        }, 2000);
+    }
+});
+
 document.addEventListener('DOMContentLoaded', async () => {
     const loadingOverlay = document.getElementById('loadingOverlay');
     const { data: { session } } = await client.auth.getSession();
@@ -61,6 +112,7 @@ document.getElementById("login").addEventListener("click", () => {
     modalTitle.textContent = "Log In";
     authSubmit.textContent = "Log In";
     authError.textContent = "";
+    document.getElementById("forgotPassword").style.display = "block";
     modal.style.display = "flex";
 });
 
@@ -69,11 +121,49 @@ document.getElementById("signup").addEventListener("click", () => {
     modalTitle.textContent = "Sign Up";
     authSubmit.textContent = "Sign Up";
     authError.textContent = "";
+    document.getElementById("forgotPassword").style.display = "none";
     modal.style.display = "flex";
 });
 
 document.getElementById("closeModal").addEventListener("click", () => {
     modal.style.display = "none";
+});
+
+// Forgot password
+const resetPasswordModal = document.getElementById("resetPasswordModal");
+
+document.getElementById("forgotPassword").addEventListener("click", () => {
+    modal.style.display = "none";
+    resetPasswordModal.style.display = "flex";
+    document.getElementById("resetMessage").textContent = "";
+    document.getElementById("resetEmail").value = "";
+});
+
+document.getElementById("closeResetModal").addEventListener("click", () => {
+    resetPasswordModal.style.display = "none";
+});
+
+document.getElementById("resetSubmit").addEventListener("click", async () => {
+    const email = document.getElementById("resetEmail").value.trim();
+    const resetMessage = document.getElementById("resetMessage");
+
+    if (!email) {
+        resetMessage.style.color = "red";
+        resetMessage.textContent = "Please enter your email.";
+        return;
+    }
+
+    const { error } = await client.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.href
+    });
+
+    if (error) {
+        resetMessage.style.color = "red";
+        resetMessage.textContent = error.message;
+    } else {
+        resetMessage.style.color = "green";
+        resetMessage.textContent = "Reset link sent! Check your email.";
+    }
 });
 
 authSubmit.addEventListener("click", async () => {
@@ -158,7 +248,7 @@ const logoutButton = document.getElementById('logout');
 const startPracticeReadingButton = document.getElementById('startPracticeReading');
 const startPracticeMathButton = document.getElementById('startPracticeMath');
 const userProfileForm = document.getElementById('userProfileForm');
-const menuButtons = document.querySelectorAll('.menuButtons');
+const menuButtons = document.querySelectorAll('.menuButton');
 const scheduleTestDate = document.getElementById('scheduleTestDate');
 const startDiagnostic = document.getElementById('startDiagnostic');
 
@@ -179,17 +269,15 @@ function changeSection(nextSection) {
     }
     
     localStorage.setItem('lastViewedSection', nextSection.id);
-    console.log("Saved to storage:", localStorage.getItem('lastViewedSection'));
 }
 
 enterPortalButton.addEventListener('click', () => {
     changeSection(authenticationSection);
-}); 
+});
 
 document.getElementById('backToWelcome').addEventListener('click', () => {
     modal.style.display = 'none';
     changeSection(welcomeSection);
-    fetchDashboardInformation();
 });
 
 userProfileForm.addEventListener('submit', async (event) => {
@@ -305,17 +393,6 @@ async function renderDashboard() {
     quickInformationMathematics.innerHTML = temporaryTextHolder2;
 }
 
-async function fetchScheduleDateInformation(){
-    const scheduledDateText = document.getElementById('scheduledDateText');
-    const scheduledDateStatus = document.getElementById('scheduledDateStatus');
-    const scheduledDateComment = document.getElementById('scheduledDateComment');
-
-    const { data: { user } } = await client.auth.getUser();
-
-    const { date, error } = await client
-        .from('studentRequests')
-        .select('studentID')
-}
 
 document.querySelector('.mainTabs').addEventListener('click', async (event) => {
     if (event.target.classList.contains('menuButton')) {
@@ -450,24 +527,24 @@ async function pullQuestion(questionAmount) {
 
         const { data: { user } } = await client.auth.getUser();
 
-        const { data, error } = await client
+        const { data: profileStatus } = await client
             .from('userProfiles')
-            .select('ReadingDiagnosticCompleted')
+            .select('ReadingDiagnosticCompleted, MathDiagnosticCompleted')
             .eq('id', user.id)
             .single();
 
-        if(data.ReadingDiagnosticCompleted === false){
-            const { data, error } = await client
+        if(profileStatus?.ReadingDiagnosticCompleted === false){
+            await client
                 .from('userProfiles')
                 .update({ ReadingDiagnosticCompleted: true })
-                .eq('id', user.id)
+                .eq('id', user.id);
         }
 
-        if (data.MathDiagnosticCompleted === false) {
-            const { data, error } = await client
+        if(profileStatus?.MathDiagnosticCompleted === false){
+            await client
                 .from('userProfiles')
-                .update({MathDiagnosticCompleted: true })
-                .eq('id', user.id)
+                .update({ MathDiagnosticCompleted: true })
+                .eq('id', user.id);
         }
 
         container.innerHTML = `
@@ -716,6 +793,5 @@ async function adaptiveAlgorithm(databaseName) {
         }
     }
 
-    console.log(sessionQuestions);
     return sessionQuestions;
 }

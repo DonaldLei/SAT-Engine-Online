@@ -70,6 +70,25 @@
                         style="width:100%; padding:10px; margin-bottom:15px; box-sizing:border-box; font-size:16px;"><br>
                     <button id="authSubmit" style="width:100%; padding:12px; font-size:16px; cursor:pointer;">Log In</button>
                     <p id="authError" style="color:red; font-size:14px; margin-top:10px;"></p>
+                    <p id="forgotPassword" style="display:none; text-align:center; margin-top:10px; font-size:14px; color:#7B5CD0; cursor:pointer; text-decoration:underline;">Forgot Password?</p>
+                </div>
+            </div>
+
+            <div id="resetPasswordModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:101; justify-content:center; align-items:center;">
+                <div style="background:white; padding:40px; border-radius:8px; width:320px; position:relative;">
+                    <button id="closeResetModal" style="position:absolute; top:10px; right:15px; background:none; border:none; font-size:20px; cursor:pointer;">✕</button>
+                    <h2 id="resetModalTitle" style="margin-top:0;">Reset Password</h2>
+                    <p id="resetModalSubtitle" style="font-size:14px; color:#555;">Enter your email and we'll send you a reset link.</p>
+                    <div id="resetEmailStep">
+                        <input id="resetEmail" type="email" placeholder="Email" style="width:100%; padding:10px; margin-bottom:15px; box-sizing:border-box; font-size:16px;">
+                        <button id="resetSubmit" style="width:100%; padding:12px; font-size:16px; cursor:pointer; background:#7B5CD0; color:white; border:none; border-radius:4px;">Send Reset Link</button>
+                    </div>
+                    <div id="resetNewPasswordStep" style="display:none;">
+                        <input id="newPassword" type="password" placeholder="New password" style="width:100%; padding:10px; margin-bottom:10px; box-sizing:border-box; font-size:16px;">
+                        <input id="confirmPassword" type="password" placeholder="Confirm new password" style="width:100%; padding:10px; margin-bottom:15px; box-sizing:border-box; font-size:16px;">
+                        <button id="updatePasswordSubmit" style="width:100%; padding:12px; font-size:16px; cursor:pointer; background:#7B5CD0; color:white; border:none; border-radius:4px;">Update Password</button>
+                    </div>
+                    <p id="resetMessage" style="font-size:14px; margin-top:10px;"></p>
                 </div>
             </div>
         </div>
