@@ -7,6 +7,10 @@
     <title>ClearPillar</title>
 </head>
 <body>
+<div id="loadingOverlay" class="loading-overlay">
+    <p>Loading...</p>
+</div>
+
 <div id = "entireApp">
     <div id = "appSidebar" class = "sidebar">
         <h1>ClearPillar</h1>
@@ -176,34 +180,34 @@
         
         <div id="practiceSection" class="viewApp hidden">
         </div>
-        </div>
         
         <div id="scheduleTestSection" class="viewApp hidden">
-            <h1>Schedule your next SAT date</h1>
-            <p>Send a request to your tutor to confirm your test scheduling.</p>
-            <form id=scheduleTestDate>
-                <label for="testDate">Next test date:</label>
-                <input type="date" id="testDate" name="testDate"></input>
-                <input type="submit" value="Submit">
-            </form>
-        
-            <div class="scheduleRequests">
-                <h2>Your schedule requests:</h2>
-                <div id="scheduleRequestsContainer">
-                    <div>
-                        <p id=scheduledDateText>Scheduled date:</p>
-                    </div>
-                    <div>
-                        <p id=scheduledDateStatus>Status:</p>
-                    </div>
-                    <div>
-                        <p id=scheduledDateComment>Comment:</p>
+            <div class="scheduleContainer">
+                <div class="scheduleForm">
+                    <h1>Schedule your next SAT date</h1>
+                    <p>Send a request to your tutor to confirm your test scheduling.</p>
+                    <form id="scheduleTestDate">
+                        <label for="testDate">Next test date:</label>
+                        <input type="date" id="testDate" name="testDate"></input>
+                        <input type="submit" value="Submit">
+                    </form>
+                </div>
+            
+                <div class="scheduleRequests">
+                    <h2>Your schedule requests:</h2>
+                    <div id="scheduleRequestsContainer">
+                        <div>
+                            <p id="scheduledDateText">Scheduled date:</p>
+                        </div>
+                        <div>
+                            <p id="scheduledDateStatus">Status:</p>
+                        </div>
+                        <div>
+                            <p id="scheduledDateComment">Comment:</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-        
-            <div id="loadingOverlay" class="loading-overlay">
-                <p>Loading...</p>
+            
             </div>
         </div>
     </div>

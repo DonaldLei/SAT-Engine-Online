@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lexend:wght@400;600;800&display=swap');
 
 /* Global */
+
 html {
     background-color: #212856;
 }
@@ -18,7 +19,41 @@ body {
     background-color: white;
     font-family: 'Lexend', sans-serif;
     overscroll-behavior: none;
+    overscroll-behavior-y: none;
+    overflow-y: hidden;
 }
+
+#entireApp {
+    display: flex;
+    width: 100vw; 
+    height: 100vh; 
+    overflow: hidden; 
+}
+
+#appSidebar {
+    width: 250px;    
+    flex-shrink: 0; 
+    height: 100vh;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 1px solid #ccc;
+}
+
+#mainContent {
+    flex-grow: 1; 
+    min-width: 0; 
+    height: 100vh;
+    overflow-y: auto;
+    overscroll-behavior-y: none;
+}
+
+.viewApp {
+    flex-grow: 1;
+    width: 100%;
+}
+
 /* set up user profile */
 #userProfileForm {
     display: flex;
@@ -58,11 +93,20 @@ body {
 }
 
 #scheduleTestSection {
+    flex-grow: 1;
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    background-color: #EFEFEF;
+}
+
+.scheduleContainer {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    background-color: #EFEFEF;
+    align-items: center;  
 }
 
 .scheduleRequests {
@@ -113,6 +157,7 @@ header {
 }
 
 #missionStatement, .enterPortal {
+    background-color: white;
     flex: 1;
     width: 0;
     display: flex;
@@ -180,26 +225,6 @@ header {
 }
 
 /* Sidebar */
-.sidebar {
-    display: flex;
-    flex-direction: column;
-    background-color: white;
-    align-items: center;
-    font-family: 'Lexend', sans-serif;
-    height: 100vh;
-    width: 250px;
-    padding: 10px;  
-    flex-shrink: 0;
-    position: fixed;
-}
-
-.sidebar h1 {
-    padding: 10px;
-    color: #212856;
-    font-family: 'Lexend', sans-serif;
-    font-weight: 600;
-}
-
 .mainTabs {
     color: white;
     display: flex;
@@ -235,18 +260,11 @@ header {
 /* Dashboard */
 .dashboardContainer {
     background-color: #EFEFEF;
-    width: 1300px;
-    margin-left: 260px;
-    display: flex;
-    flex-direction: column;
-    padding: 20px; 
+    width: 100%;
     min-height: 100vh;
+    padding: 20px; 
+    box-sizing: border-box;
 }
-
-/* .dashboardContainer h1 {
-    margin: 5px;
-    padding: 10px 20px;
-} */
 
 .welcomeUserContainer {
     background-color: #7B5CD0;
@@ -370,11 +388,15 @@ header {
     left: 0;
     width: 100%;
     height: 100%;
-    background: white;
+    background-color: white; 
     display: flex;
-    align-items: center;
     justify-content: center;
-    z-index: 9999;
+    align-items: center;
+    z-index: 99999;
+}
+
+.loading-overlay.hidden {
+    display: none;
 }
 
 .hidden {

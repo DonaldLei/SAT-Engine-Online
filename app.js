@@ -170,7 +170,7 @@ function changeSection(nextSection) {
 
     const sidebar = document.getElementById('appSidebar');
     
-    const hideSidebarOn = ['welcomeSection', 'authenticationSection'];
+    const hideSidebarOn = ['welcomeSection', 'authenticationSection', 'userSetupSection'];
 
     if (hideSidebarOn.includes(nextSection.id)) {
         sidebar.classList.add('hidden'); 
