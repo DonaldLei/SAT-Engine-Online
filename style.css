@@ -16,7 +16,6 @@ body {
     margin: 0;
     padding: 0;
     width: 100%;
-    background-color: white;
     font-family: 'Lexend', sans-serif;
     overscroll-behavior: none;
     overscroll-behavior-y: none;
@@ -92,6 +91,10 @@ body {
     background-color: #212856;
 }
 
+#diagnosticSection {
+    background-color: #EFEFEF;
+}
+
 #scheduleTestSection {
     flex-grow: 1;
     height: 100%;
@@ -109,26 +112,51 @@ body {
     align-items: center;  
 }
 
+#scheduleTestDate {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.scheduleForm {
+    padding: 10px;
+}
+
+.dateSubmit {
+    width: 100px;
+    padding: 9px 10px;
+    font-size: 15px;
+    background-color: #3BBAAB;
+    border: none;
+    border-radius: 9999px;
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
+}
+
 .scheduleRequests {
     border-style: solid;
     border-radius: 20px;
     background-color: white;
     border-color: white;
+    align-items: flex-start;
 }
 
 .scheduleRequests h2 {
-    text-decoration: underline;
+    align-items: flex-start;
+    margin: 10px;
 }
 
 #scheduleRequestsContainer {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    display: flex;
     align-items: center;
-    justify-items: start;
+    justify-items: flex-start;
     border: 1px solid #c4b0f9;
     border-radius: 20px;
     margin: 5px;
-    gap: 10px;
+    gap: 30px;
     padding: 10px 20px;
     background-color: #E3DCF5;
 }
@@ -235,7 +263,7 @@ header {
 }
 
 .mainTabs .menuButton:nth-child(5) { 
-    margin-top: 295px; 
+    margin-top: auto; 
 }
 
 .menuButton {

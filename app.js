@@ -394,23 +394,30 @@ async function renderDashboard() {
 }
 
 
-document.querySelector('.mainTabs').addEventListener('click', async (event) => {
-    if (event.target.classList.contains('menuButton')) {
-        const target = event.target.dataset.target;
+document.querySelectorAll('.menuButton').forEach(button => {
+    button.addEventListener('click', async () => {
+        const targetId = button.getAttribute('data-target');
+        const action = button.getAttribute('data-action');
+        const targetSection = document.getElementById(targetId);
 
-        if (target === 'logout') {
-            await client.auth.signOut();
-            changeSection(welcomeSection);
+        if (action === 'logout') {
+            try {
+                await client.auth.signOut();
+                localStorage.removeItem('lastViewedSection');
+                changeSection(targetSection);
+            } catch (error) {
+                console.error("Error signing out:", error);
+            }
             return;
         }
 
-        const section = document.getElementById(target);
-        if (section) {
-            changeSection(section);
-        } else {
-            console.warn("Could not change section");
+        if (targetId) {
+            if (targetSection) {
+                changeSection(targetSection);
+                localStorage.setItem('lastViewedSection', targetId);
+            }
         }
-    }
+    });
 });
 
 startDiagnostic.addEventListener('click', async () => {

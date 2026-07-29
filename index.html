@@ -20,7 +20,7 @@
             <button class="menuButton">Statistics</button>
             <button class="menuButton" data-target="scheduleTestSection">Schedule Test Request</button>
             <button class="menuButton">Messages</button>
-            <button class="menuButton" data-target="welcomeSection">Logout</button>
+            <button class="menuButton" data-target="welcomeSection" data-action="logout">Logout</button>
         </nav>
     </div>
 
@@ -36,7 +36,7 @@
                 <div id=missionStatement>
                     <p>Our mission is to ensure that all students are <span class="highlightWord">prepared</span> and <span
                             class="highlightWord">confident</span> in their
-                        <span class="underlineWord">SAT skills</span>. We aim to fill in the gaps in students' skills by
+                        <span class="underlineWord">test skills</span>. We aim to fill in the gaps in students' skills by
                         assessing their
                         weaknesses and correcting them through targeted practice. By identifying students' skills and being able
                         to track their
@@ -167,7 +167,7 @@
         
                 <label for="applicationDeadline">Target college application deadline:</label>
                 <input type="date" id="applicationDeadline" name="deadline"></input>
-                <label for="satAttempts">Number of SAT attempts (0-3):</label><br>
+                <label for="satAttempts">Number of test attempts (0-3):</label><br>
                 <input type="number" min="0" max="3" id="satAttempts" name="satAttempts" required><br>
                 <label for="currentScore">Current Score:</label><br>
                 <input type="number" id="currentScore" name="currentScore" required><br>
@@ -203,12 +203,14 @@
         <div id="scheduleTestSection" class="viewApp hidden">
             <div class="scheduleContainer">
                 <div class="scheduleForm">
-                    <h1>Schedule your next SAT date</h1>
+                    <h1>Schedule your next test date</h1>
                     <p>Send a request to your tutor to confirm your test scheduling.</p>
                     <form id="scheduleTestDate">
-                        <label for="testDate">Next test date:</label>
-                        <input type="date" id="testDate" name="testDate"></input>
-                        <input type="submit" value="Submit">
+                        <div id="dateSelector">
+                            <label for="testDate">Next test date:</label>
+                            <input type="date" id="testDate" name="testDate"></input>
+                        </div>
+                        <input type="submit" value="Submit" class="dateSubmit">
                     </form>
                 </div>
             
@@ -218,9 +220,11 @@
                         <div>
                             <p id="scheduledDateText">Scheduled date:</p>
                         </div>
+
                         <div>
                             <p id="scheduledDateStatus">Status:</p>
                         </div>
+
                         <div>
                             <p id="scheduledDateComment">Comment:</p>
                         </div>
