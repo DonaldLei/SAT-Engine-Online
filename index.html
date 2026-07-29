@@ -8,171 +8,206 @@
 </head>
 <body>
 <div id = "entireApp">
-    <div id = "welcomeSection" class = "viewApp">
-        <header class = "landingPageHeader">
-            <div class = "landingPageContainer">
-                <h1>Welcome to SAT Engine Online</h1>
-            </div>
-        </header>
-
-        <div class = "bodyContainer">
-            <div id = missionStatement>
-                <p>Our mission is to ensure that all students are <span class = "highlightWord">prepared</span> and <span class = "highlightWord">confident</span> in their
-                    <span class = "underlineWord">SAT skills</span>. We aim to fill in the gaps in students' skills by assessing their
-                    weaknesses and correcting them through targeted practice. By identifying students' skills and being able to track their
-                    progress, tutors will be able to provide more <span class = "highlightWord">meaningful</span> and <span class = "highlightWord">effective</span> instruction that is personalized
-                    to the student.
-                </p>
-            </div>
-
-            <div class = "enterPortal">
-                <p>Begin your journey to <span class = "highlightWord">success</span></p>
-                <button id = "enterPortalButton">Enter Portal</button>
-            </div>
-        </div>
+    <div id = "appSidebar" class = "sidebar">
+        <h1>ClearPillar</h1>
+        <nav class = "mainTabs">
+            <button class="menuButton" data-target="dashboardSection">Dashboard</button>
+            <button class="menuButton">Profile</button>
+            <button class="menuButton">Statistics</button>
+            <button class="menuButton" data-target="scheduleTestSection">Schedule Test Request</button>
+            <button class="menuButton">Messages</button>
+            <button class="menuButton" data-target="welcomeSection">Logout</button>
+        </nav>
     </div>
 
-    <div id = "authenticationSection" class = "viewApp hidden">
-        <button id="backToWelcome" class="back-btn">&#8592;</button>
-        <button id = "login">Log In</button>
-        <button id = "signup">Sign Up</button>
+    <div id="mainContent" style="flex-grow: 1;">
+        <div id="welcomeSection" class="viewApp">
+            <header class="landingPageHeader">
+                <div class="landingPageContainer">
+                    <h1>Welcome to SAT Engine Online</h1>
+                </div>
+            </header>
         
-        <div id="authModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:100; justify-content:center; align-items:center;">
-        <div style="background:white; padding:40px; border-radius:8px; width:320px; position:relative;">
-            <button id="closeModal" style="position:absolute; top:10px; right:15px; background:none; border:none; font-size:20px; cursor:pointer;">✕</button>
-            <h2 id="modalTitle" style="margin-top:0;">Log In</h2>
-            <input id="authEmail" type="email" placeholder="Email" style="width:100%; padding:10px; margin-bottom:10px; box-sizing:border-box; font-size:16px;"><br>
-            <input id="authPassword" type="password" placeholder="Password" style="width:100%; padding:10px; margin-bottom:15px; box-sizing:border-box; font-size:16px;"><br>
-            <button id="authSubmit" style="width:100%; padding:12px; font-size:16px; cursor:pointer;">Log In</button>
-            <p id="authError" style="color:red; font-size:14px; margin-top:10px;"></p>
-        </div>
-    </div>
-    </div>
-
-    <div id = "dashboardSection" class = "viewApp hidden">
-        <div class = "sidebar">
-            <h1>ClearPillar</h1>
-
-            <nav class = "mainTabs">
-                <button class = "menuButton" data-target = "dashboardSection">Dashboard</button>
-                <button class = "menuButton">Profile</button>
-                <button class = "menuButton">Statistics</button> 
-                <button class = "menuButton" data-target = "scheduleTestSection">Schedule Test Request</button>
-                <button class = "menuButton">Messages</button>
-                <!-- <button class = "menuButton">Settings</button> -->
-                <button class = "menuButton" data-target = "welcomeSection">Logout</button>
-            </nav>
-        </div>
-
-        <div class = "dashboardContainer">
-            <div class = "welcomeUserContainer">
-                <p><span id="current-date"></span></p>
-                <h2 id = "welcomeMessage"></h2>
-                <h3>Continue your work!</h3>
-            </div>
-
-            <div class = "startPractice">
-                <h2 id = "tasksInfo">Your tasks for today</h1>
-                <div class = "startPracticeContainer">
-                    <div class = "startPracticeCard">
-                        <div><p>Reading & Writing</p></div>
-                        <div><p id = "readingPracticeDescription">Build on your Reading & Writing skills here!</p></div>
-                        <div><button id = "startPracticeReading">Start</button></div>
-                    </div>
-
-                    <div class = "startPracticeCard">
-                        <div><p>Mathematics</p></div>
-                        <div><p id = "mathPracticeDescription">Build on your Mathematics skills here!</p></div>
-                        <div><button id = "startPracticeMath">Start</button></div>
-                    </div>
-                </div>  
-            </div>
-            
-            <div id = "quickInfoContainer">
-                <h2>Quick Information</h2>
-                <div class = "quickInfoReading">
-                    <h3>Top 3 Reading & English Skills to Improve:</h3>
-                    <div id = "skillsListReading"></div>
+            <div class="bodyContainer">
+                <div id=missionStatement>
+                    <p>Our mission is to ensure that all students are <span class="highlightWord">prepared</span> and <span
+                            class="highlightWord">confident</span> in their
+                        <span class="underlineWord">SAT skills</span>. We aim to fill in the gaps in students' skills by
+                        assessing their
+                        weaknesses and correcting them through targeted practice. By identifying students' skills and being able
+                        to track their
+                        progress, tutors will be able to provide more <span class="highlightWord">meaningful</span> and <span
+                            class="highlightWord">effective</span> instruction that is personalized
+                        to the student.
+                    </p>
                 </div>
-
-                <div class = "quickInfoMathematics">
-                    <h3>Top 3 Mathematics Skills to Improve:</h3>
-                    <div id = "skillsListMathematics"></div>
+        
+                <div class="enterPortal">
+                    <p>Begin your journey to <span class="highlightWord">success</span></p>
+                    <button id="enterPortalButton">Enter Portal</button>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div id = "userSetupSection" class = "viewApp hidden">
-        <form id = "userProfileForm">
-            <h1>Set up your profile:</h1>
-
-            <div id = "setProfileName">
-                <label for = "firstName">First Name:</label><br>
-                <input type = "text" id = "firstName" name = "firstName" required><br>
-                <label for = "lastName">Last Name:</label><br>
-                <input type = "text" id = "lastName" name = "lastName" required><br>
+        
+        <div id="authenticationSection" class="viewApp hidden">
+            <button id="backToWelcome" class="back-btn">&#8592;</button>
+            <button id="login">Log In</button>
+            <button id="signup">Sign Up</button>
+        
+            <div id="authModal"
+                style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:100; justify-content:center; align-items:center;">
+                <div style="background:white; padding:40px; border-radius:8px; width:320px; position:relative;">
+                    <button id="closeModal"
+                        style="position:absolute; top:10px; right:15px; background:none; border:none; font-size:20px; cursor:pointer;">✕</button>
+                    <h2 id="modalTitle" style="margin-top:0;">Log In</h2>
+                    <input id="authEmail" type="email" placeholder="Email"
+                        style="width:100%; padding:10px; margin-bottom:10px; box-sizing:border-box; font-size:16px;"><br>
+                    <input id="authPassword" type="password" placeholder="Password"
+                        style="width:100%; padding:10px; margin-bottom:15px; box-sizing:border-box; font-size:16px;"><br>
+                    <button id="authSubmit" style="width:100%; padding:12px; font-size:16px; cursor:pointer;">Log In</button>
+                    <p id="authError" style="color:red; font-size:14px; margin-top:10px;"></p>
+                </div>
             </div>
-
-            <p>Current grade level:</p>
-
-            <div id = "chooseGrade">
-                <input type = "radio" id = "grade9" name = "gradeLevel" value = "9" required>
-                <label for = "9th Grade">9th Grade</label><br>
-                <input type = "radio" id = "grade10" name = "gradeLevel" value = "10">
-                <label for = "10th Grade">10th Grade</label><br>
-                <input type = "radio" id = "grade11" name = "gradeLevel" value = "11">
-                <label for = "11th Grade">11th Grade</label><br>
-                <input type= "radio" id = "grade12" name = "gradeLevel" value = "12">
-                <label for="12th Grade">12th Grade</label><br>
-            </div>
-
-            <label for = "applicationDeadline">Target college application deadline:</label>
-            <input type = "date" id = "applicationDeadline" name = "deadline"></input>
-            <label for = "satAttempts">Number of SAT attempts (0-3):</label><br>
-            <input type = "number" min = "0" max = "3" id = "satAttempts" name = "satAttempts" required><br>
-            <label for = "currentScore">Current Score:</label><br>
-            <input type = "number" id = "currentScore" name = "currentScore" required><br>
-            <input type = "submit" value = "Submit">
-        </form>
-    </div>
-
-    <div id = "diagnosticSection" class = "viewApp hidden">
-        <div class = "diagnosticContainer">
-        <p>Before you start your diagnostic, there are a few steps that you need to do. Go onto the <a href = "https://satsuiteeducatorquestionbank.collegeboard.org/" target="_blank">College Board's Educator Question Bank</a> website and press 
-            "Find Questions", select "SAT" for the step 1, the current subject you're doing for this diagnostic for step 2, check all the boxes in step 3, and then click the search button.
-            You will then be redirected to the question bank, you will see a button that says "Manage Selection", click on it and press "Select Entire Set". Then press the "Export" 
-            button and choose "No correct answers or explanations" and press the "Export PDF" button. You will then export the pdf for "With correct answers and explanations". These pdfs
-            will be where you find the question that you have been assigned using the question ID that has been provided. Simply press the "CRTL" and the "F" button on your keyboard at the same time and then
-            paste the question ID in the search bar that appears on the top right of your screen. When you are done answering the question, you will then reference the "With correct answers and explanations" pdf
-            to verify your answer and read the explanation by using the same "CRTL" and "F" search method. After that, you will come back here and answer whether or not you answered correctly. </p>
-
-        <button id = "startDiagnostic">Start Diagnostic</button>
         </div>
-    </div> 
-
-    <div id = "practiceSection" class = "viewApp hidden">
+        
+        <div id="dashboardSection" class="viewApp hidden">
+            <div class="dashboardContainer">
+                <div class="welcomeUserContainer">
+                    <p><span id="current-date"></span></p>
+                    <h2 id="welcomeMessage"></h2>
+                    <h3>Continue your work!</h3>
+                </div>
+        
+                <div class="startPractice">
+                    <h2 id="tasksInfo">Your tasks for today</h1>
+                        <div class="startPracticeContainer">
+                            <div class="startPracticeCard">
+                                <div>
+                                    <p>Reading & Writing</p>
+                                </div>
+                                <div>
+                                    <p id="readingPracticeDescription">Build on your Reading & Writing skills here!</p>
+                                </div>
+                                <div><button id="startPracticeReading">Start</button></div>
+                            </div>
+        
+                            <div class="startPracticeCard">
+                                <div>
+                                    <p>Mathematics</p>
+                                </div>
+                                <div>
+                                    <p id="mathPracticeDescription">Build on your Mathematics skills here!</p>
+                                </div>
+                                <div><button id="startPracticeMath">Start</button></div>
+                            </div>
+                        </div>
+                </div>
+        
+                <div id="quickInfoContainer">
+                    <h2>Quick Information</h2>
+                    <div class="quickInfoReading">
+                        <h3>Top 3 Reading & English Skills to Improve:</h3>
+                        <div id="skillsListReading"></div>
+                    </div>
+        
+                    <div class="quickInfoMathematics">
+                        <h3>Top 3 Mathematics Skills to Improve:</h3>
+                        <div id="skillsListMathematics"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="userSetupSection" class="viewApp hidden">
+            <form id="userProfileForm">
+                <h1>Set up your profile:</h1>
+        
+                <div id="setProfileName">
+                    <label for="firstName">First Name:</label><br>
+                    <input type="text" id="firstName" name="firstName" required><br>
+                    <label for="lastName">Last Name:</label><br>
+                    <input type="text" id="lastName" name="lastName" required><br>
+                </div>
+        
+                <p>Current grade level:</p>
+        
+                <div id="chooseGrade">
+                    <input type="radio" id="grade9" name="gradeLevel" value="9" required>
+                    <label for="9th Grade">9th Grade</label><br>
+                    <input type="radio" id="grade10" name="gradeLevel" value="10">
+                    <label for="10th Grade">10th Grade</label><br>
+                    <input type="radio" id="grade11" name="gradeLevel" value="11">
+                    <label for="11th Grade">11th Grade</label><br>
+                    <input type="radio" id="grade12" name="gradeLevel" value="12">
+                    <label for="12th Grade">12th Grade</label><br>
+                </div>
+        
+                <label for="applicationDeadline">Target college application deadline:</label>
+                <input type="date" id="applicationDeadline" name="deadline"></input>
+                <label for="satAttempts">Number of SAT attempts (0-3):</label><br>
+                <input type="number" min="0" max="3" id="satAttempts" name="satAttempts" required><br>
+                <label for="currentScore">Current Score:</label><br>
+                <input type="number" id="currentScore" name="currentScore" required><br>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        
+        <div id="diagnosticSection" class="viewApp hidden">
+            <div class="diagnosticContainer">
+                <p>Before you start your diagnostic, there are a few steps that you need to do. Go onto the <a
+                        href="https://satsuiteeducatorquestionbank.collegeboard.org/" target="_blank">College Board's Educator
+                        Question Bank</a> website and press
+                    "Find Questions", select "SAT" for the step 1, the current subject you're doing for this diagnostic for step
+                    2, check all the boxes in step 3, and then click the search button.
+                    You will then be redirected to the question bank, you will see a button that says "Manage Selection", click
+                    on it and press "Select Entire Set". Then press the "Export"
+                    button and choose "No correct answers or explanations" and press the "Export PDF" button. You will then
+                    export the pdf for "With correct answers and explanations". These pdfs
+                    will be where you find the question that you have been assigned using the question ID that has been
+                    provided. Simply press the "CRTL" and the "F" button on your keyboard at the same time and then
+                    paste the question ID in the search bar that appears on the top right of your screen. When you are done
+                    answering the question, you will then reference the "With correct answers and explanations" pdf
+                    to verify your answer and read the explanation by using the same "CRTL" and "F" search method. After that,
+                    you will come back here and answer whether or not you answered correctly. </p>
+        
+                <button id="startDiagnostic">Start Diagnostic</button>
+            </div>
+        </div>
+        
+        <div id="practiceSection" class="viewApp hidden">
+        </div>
+        </div>
+        
+        <div id="scheduleTestSection" class="viewApp hidden">
+            <h1>Schedule your next SAT date</h1>
+            <p>Send a request to your tutor to confirm your test scheduling.</p>
+            <form id=scheduleTestDate>
+                <label for="testDate">Next test date:</label>
+                <input type="date" id="testDate" name="testDate"></input>
+                <input type="submit" value="Submit">
+            </form>
+        
+            <div class="scheduleRequests">
+                <h2>Your schedule requests:</h2>
+                <div id="scheduleRequestsContainer">
+                    <div>
+                        <p id=scheduledDateText>Scheduled date:</p>
+                    </div>
+                    <div>
+                        <p id=scheduledDateStatus>Status:</p>
+                    </div>
+                    <div>
+                        <p id=scheduledDateComment>Comment:</p>
+                    </div>
+                </div>
+            </div>
+        
+            <div id="loadingOverlay" class="loading-overlay">
+                <p>Loading...</p>
+            </div>
+        </div>
     </div>
 </div>
-
-    <div id = "scheduleTestSection" class = "viewApp hidden">
-        <h1>Schedule your next SAT date</h1>
-        <p>Send a request to your tutor to confirm your test scheduling.</p>
-        <form id = scheduleTestDate>
-            <label for = "testDate">Next test date:</label>
-            <input type = "date" id = "testDate" name = "testDate"></input>
-            <input type = "submit" value = "Submit">
-        </form>
-
-        <div class = "scheduleRequests">
-            <h2>Your schedule requests:</h2>
-            <div id = "scheduleRequestsContainer">
-                <div><p id = scheduledDateText>Scheduled date:</p></div>
-                <div><p id = scheduledDateStatus>Status:</p></div>
-                <div><p id = scheduledDateComment>Comment:</p></div>
-            </div>
-        </div>
-    </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type = "module" src="app.js" defer></script>

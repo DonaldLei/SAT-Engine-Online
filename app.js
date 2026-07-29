@@ -22,6 +22,40 @@ const authSubmit = document.getElementById("authSubmit");
 const authError = document.getElementById("authError");
 let currentMode;
 
+document.addEventListener('DOMContentLoaded', async () => {
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    const { data: { session } } = await client.auth.getSession();
+
+    if (session) {
+        const { data: profile } = await client
+            .from('userProfiles')
+            .select('first_name, last_name')
+            .eq('id', session.user.id)
+            .single();
+
+        if (!profile || !profile.first_name || !profile.last_name) {
+            changeSection(userSetupSection);
+        } else {
+            const savedSectionId = localStorage.getItem('lastViewedSection');
+            const targetSection = savedSectionId ? document.getElementById(savedSectionId) : null;
+
+            if (targetSection && targetSection.id !== 'welcomeSection' && targetSection.id !== 'authenticationSection') {
+                changeSection(targetSection);
+                
+                if (targetSection.id === 'dashboardSection') {
+                    await renderDashboard();
+                }
+            } else {
+                await renderDashboard();
+            }
+        }
+    } else {
+        changeSection(welcomeSection);
+    }
+    
+    if(loadingOverlay) loadingOverlay.style.display = 'none';
+});
+
 document.getElementById("login").addEventListener("click", () => {
     currentMode = "login";
     modalTitle.textContent = "Log In";
@@ -58,7 +92,7 @@ authSubmit.addEventListener("click", async () => {
             authError.textContent = error.message;
         } else {
             modal.style.display = "none";
-            const { data: { user } } = await client.auth.getUser();
+            const { data: { user } } = await client.auth.getUser(); 
             
             const { data, error } = await client
                 .from('userProfiles')
@@ -74,46 +108,7 @@ authSubmit.addEventListener("click", async () => {
             if(!data.first_name && !data.last_name){
                 changeSection(userSetupSection);
             } else {
-                fetchName();
-                changeSection(dashboardSection);
-                const userStatistics = await fetchDashboardInformation();
-                const quickInformationEnglish = document.getElementById('skillsListReading');
-                const quickInformationMathematics = document.getElementById('skillsListMathematics');
-
-                let temporaryTextHolder1 = '';
-                let temporaryTextHolder2 = '';
-
-                const englishLimit = Math.min(3, userStatistics.English.length);
-
-                for(let i = 0; i < englishLimit; i++){
-                    const statistics = userStatistics.English[i];
-                    
-                    temporaryTextHolder1 += `
-                        <div class = "skillsListReading">
-                            <ul>
-                                <li><p>${statistics.domainName} | Accuracy: ${statistics.domainAccuracy}% | Average time taken: ${statistics.domainAverageTimeElapsed} seconds</p></li>
-                            </ul>
-                        </div>
-                    `
-                }
-
-                quickInformationEnglish.innerHTML = temporaryTextHolder1;
-
-                const mathematicsLimit = Math.min(3, userStatistics.Mathematics.length);
-                
-                for(let i = 0; i < userStatistics.Mathematics.length; i++){
-                    const statistics = userStatistics.Mathematics[i];
-
-                    temporaryTextHolder2 += `
-                        <div class = "skillsListMathematics">
-                            <ul>
-                                <li><p>${statistics.domainName} | Accuracy: ${statistics.domainAccuracy}% | Average time taken: ${statistics.domainAverageTimeElapsed} seconds</p></li>
-                            </ul>
-                        </div>
-                    `
-                }
-                
-                quickInformationMathematics.innerHTML = temporaryTextHolder2;
+                await renderDashboard();
             }
         }
     } else {
@@ -167,16 +162,24 @@ const menuButtons = document.querySelectorAll('.menuButtons');
 const scheduleTestDate = document.getElementById('scheduleTestDate');
 const startDiagnostic = document.getElementById('startDiagnostic');
 
-function changeSection(nextSection){
-    welcomeSection.classList.add('hidden');
-    authenticationSection.classList.add('hidden');
-    dashboardSection.classList.add('hidden');
-    practiceSection.classList.add('hidden');
-    userSetupSection.classList.add('hidden');
-    scheduleTestSection.classList.add('hidden');
-    diagnosticSection.classList.add('hidden');
+function changeSection(nextSection) {
+    const sections = document.querySelectorAll('.viewApp');
+    sections.forEach(s => s.classList.add('hidden'));
     
     nextSection.classList.remove('hidden');
+
+    const sidebar = document.getElementById('appSidebar');
+    
+    const hideSidebarOn = ['welcomeSection', 'authenticationSection'];
+
+    if (hideSidebarOn.includes(nextSection.id)) {
+        sidebar.classList.add('hidden'); 
+    } else {
+        sidebar.classList.remove('hidden');
+    }
+    
+    localStorage.setItem('lastViewedSection', nextSection.id);
+    console.log("Saved to storage:", localStorage.getItem('lastViewedSection'));
 }
 
 enterPortalButton.addEventListener('click', () => {
@@ -261,6 +264,46 @@ scheduleTestDate.addEventListener('submit', async (event) => {
         alert("Scheduled test has been requested.");
     }
 });
+
+async function renderDashboard() {
+    changeSection(dashboardSection);
+    await fetchName();
+
+    const userStatistics = await fetchDashboardInformation();
+    const quickInformationEnglish = document.getElementById('skillsListReading');
+    const quickInformationMathematics = document.getElementById('skillsListMathematics');
+
+    if (!quickInformationEnglish || !quickInformationMathematics) {
+        console.warn("Dashboard containers not found. Skipping render.");
+        return;
+    }
+
+    let temporaryTextHolder1 = '';
+    const englishLimit = Math.min(3, userStatistics.English.length);
+    for (let i = 0; i < englishLimit; i++) {
+        const statistics = userStatistics.English[i];
+        temporaryTextHolder1 += `
+            <div class="skillsListReading">
+                <ul>
+                    <li><p>${statistics.domainName} | Accuracy: ${statistics.domainAccuracy}% | Avg: ${statistics.domainAverageTimeElapsed} seconds</p></li>
+                </ul>
+            </div>`;
+    }
+    quickInformationEnglish.innerHTML = temporaryTextHolder1;
+
+    let temporaryTextHolder2 = '';
+    const mathematicsLimit = Math.min(3, userStatistics.Mathematics.length);
+    for (let i = 0; i < mathematicsLimit; i++) {
+        const statistics = userStatistics.Mathematics[i];
+        temporaryTextHolder2 += `
+            <div class="skillsListMathematics">
+                <ul>
+                    <li><p>${statistics.domainName} | Accuracy: ${statistics.domainAccuracy}% | Avg: ${statistics.domainAverageTimeElapsed} seconds</p></li>
+                </ul>
+            </div>`;
+    }
+    quickInformationMathematics.innerHTML = temporaryTextHolder2;
+}
 
 async function fetchScheduleDateInformation(){
     const scheduledDateText = document.getElementById('scheduledDateText');
