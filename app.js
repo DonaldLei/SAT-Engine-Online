@@ -24,7 +24,7 @@ let currentMode;
 
 // Handle password reset redirect from Supabase email link
 client.auth.onAuthStateChange((event, session) => {
-    if (event === 'PASSWORD_RECOVERY') {
+    if(event === 'PASSWORD_RECOVERY'){
         const resetPasswordModal = document.getElementById("resetPasswordModal");
         document.getElementById("resetModalTitle").textContent = "Set New Password";
         document.getElementById("resetModalSubtitle").textContent = "Enter and confirm your new password.";
@@ -40,26 +40,26 @@ document.getElementById("updatePasswordSubmit")?.addEventListener("click", async
     const confirmPassword = document.getElementById("confirmPassword").value;
     const resetMessage = document.getElementById("resetMessage");
 
-    if (!newPassword || !confirmPassword) {
+    if(!newPassword || !confirmPassword){
         resetMessage.style.color = "red";
         resetMessage.textContent = "Please fill in both fields.";
         return;
     }
 
-    if (newPassword !== confirmPassword) {
+    if(newPassword !== confirmPassword){
         resetMessage.style.color = "red";
         resetMessage.textContent = "Passwords do not match.";
         return;
     }
 
-    if (newPassword.length < 6) {
+    if(newPassword.length < 6){
         resetMessage.style.color = "red";
         resetMessage.textContent = "Password must be at least 6 characters.";
         return;
     }
 
     const { error } = await client.auth.updateUser({ password: newPassword });
-    if (error) {
+    if (error){
         resetMessage.style.color = "red";
         resetMessage.textContent = error.message;
     } else {
@@ -77,24 +77,28 @@ document.addEventListener('DOMContentLoaded', async () => {
     const loadingOverlay = document.getElementById('loadingOverlay');
     const { data: { session } } = await client.auth.getSession();
 
-    if (session) {
+    if(session){
         const { data: profile } = await client
             .from('userProfiles')
             .select('first_name, last_name')
             .eq('id', session.user.id)
             .single();
 
-        if (!profile || !profile.first_name || !profile.last_name) {
+        if(!profile || !profile.first_name || !profile.last_name){
             changeSection(userSetupSection);
         } else {
             const savedSectionId = localStorage.getItem('lastViewedSection');
             const targetSection = savedSectionId ? document.getElementById(savedSectionId) : null;
 
-            if (targetSection && targetSection.id !== 'welcomeSection' && targetSection.id !== 'authenticationSection') {
+            if(targetSection && targetSection.id !== 'welcomeSection' && targetSection.id !== 'authenticationSection'){
                 changeSection(targetSection);
                 
-                if (targetSection.id === 'dashboardSection') {
+                if(targetSection.id === 'dashboardSection'){
                     await renderDashboard();
+                }
+
+                if(targetSection.id === 'scheduleTestSection'){
+                    await fetchScheduleTestDate();
                 }
             } else {
                 await renderDashboard();
@@ -104,7 +108,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         changeSection(welcomeSection);
     }
     
-    if(loadingOverlay) loadingOverlay.style.display = 'none';
+    if(loadingOverlay){
+        loadingOverlay.style.display = 'none';
+    }
 });
 
 document.getElementById("login").addEventListener("click", () => {
@@ -147,7 +153,7 @@ document.getElementById("resetSubmit").addEventListener("click", async () => {
     const email = document.getElementById("resetEmail").value.trim();
     const resetMessage = document.getElementById("resetMessage");
 
-    if (!email) {
+    if(!email){
         resetMessage.style.color = "red";
         resetMessage.textContent = "Please enter your email.";
         return;
@@ -157,7 +163,7 @@ document.getElementById("resetSubmit").addEventListener("click", async () => {
         redirectTo: window.location.href
     });
 
-    if (error) {
+    if(error){
         resetMessage.style.color = "red";
         resetMessage.textContent = error.message;
     } else {
@@ -171,14 +177,14 @@ authSubmit.addEventListener("click", async () => {
     const password = document.getElementById("authPassword").value;
     authError.textContent = "";
 
-    if (!email || !password) {
+    if(!email || !password){
         authError.textContent = "Please enter your email and password.";
         return;
     }
 
-    if (currentMode === "login") {
+    if(currentMode === "login"){
         const { error } = await client.auth.signInWithPassword({ email, password });
-        if (error) {
+        if(error){
             authError.textContent = error.message;
         } else {
             modal.style.display = "none";
@@ -203,7 +209,7 @@ authSubmit.addEventListener("click", async () => {
         }
     } else {
         const { error } = await client.auth.signUp({ email, password });
-        if (error) {
+        if(error){
             authError.textContent = error.message;
         } else {
             modal.style.display = "none";
@@ -222,7 +228,7 @@ async function fetchName(){
         .select('first_name, last_name')
         .eq('id', user.id)
         .single();
-    if (error) {
+    if(error){
         console.error("Could not fetch name: ", error);
         changeSection(userSetupSection);
         return;
@@ -241,7 +247,8 @@ const practiceSection = document.getElementById('practiceSection');
 const userSetupSection = document.getElementById('userSetupSection');
 const scheduleTestSection = document.getElementById('scheduleTestSection');
 const diagnosticSection = document.getElementById('diagnosticSection');
-
+const profileSection = document.getElementById('profileSection');
+const statisticsSection = document.getElementById('statisticsSection');
 //Button DOM
 const enterPortalButton = document.getElementById('enterPortalButton');
 const logoutButton = document.getElementById('logout');
@@ -252,7 +259,7 @@ const menuButtons = document.querySelectorAll('.menuButton');
 const scheduleTestDate = document.getElementById('scheduleTestDate');
 const startDiagnostic = document.getElementById('startDiagnostic');
 
-function changeSection(nextSection) {
+function changeSection(nextSection){
     const sections = document.querySelectorAll('.viewApp');
     sections.forEach(s => s.classList.add('hidden'));
     
@@ -262,10 +269,20 @@ function changeSection(nextSection) {
     
     const hideSidebarOn = ['welcomeSection', 'authenticationSection', 'userSetupSection'];
 
-    if (hideSidebarOn.includes(nextSection.id)) {
+    if(hideSidebarOn.includes(nextSection.id)){
         sidebar.classList.add('hidden'); 
     } else {
         sidebar.classList.remove('hidden');
+    }
+
+    document.querySelectorAll('.menuButton').forEach(button => {
+        button.classList.remove('active');
+    });
+
+    const activeBtn = document.querySelector(`.menuButton[data-target="${nextSection.id}"]`);
+
+    if (activeBtn) {
+        activeBtn.classList.add('active');
     }
     
     localStorage.setItem('lastViewedSection', nextSection.id);
@@ -317,7 +334,6 @@ userProfileForm.addEventListener('submit', async (event) => {
 });
 
 //Insert new scheduling into the database for tutors, can only send one request at a time, will only display one request
-//Problem: Cannot reference a column that is not unique. Could only reference the id and then update the row later using the id. 
 scheduleTestDate.addEventListener('submit', async (event) => {
     event.preventDefault();
     
@@ -327,22 +343,28 @@ scheduleTestDate.addEventListener('submit', async (event) => {
 
     const { data: { user } } = await client.auth.getUser();
 
-    // const userName = await fetchName();
+    const { data: studentName, error: studentNameError } = await client
+        .from('userProfiles')
+        .select('first_name, last_name')
+        .eq('id', user.id)
+        .single();
 
-    // console.log(userName);
+    if(studentNameError){
+        console.error("Student could not be fetched: ", studentNameError);
+        return;
+    }
 
     const { data, error } = await client
         .from('studentRequests')
-        .insert([{
+        .upsert({
             studentID: user.id,
             scheduleDate: testDateScheduled,
-            // studentFirstName: userName.first_name,
-            // studentLastName: userName.last_name
-        }]);
+            studentFirstName: studentName.first_name,
+            studentLastName: studentName.last_name
+        }, { onConflict: 'studentID' });
 
-    if (error) {
-        console.error("Error: ", error);
-        alert("You have already scheduled a date!");
+    if(error){
+        console.error("Test date cannot be rescheduled: ", error);
         return;
     }
 
@@ -351,9 +373,33 @@ scheduleTestDate.addEventListener('submit', async (event) => {
     } else {
         alert("Scheduled test has been requested.");
     }
+
+    await fetchScheduleTestDate();
 });
 
-async function renderDashboard() {
+async function fetchScheduleTestDate(){
+    const { data: { user } } = await client.auth.getUser();
+
+    const { data, error } = await client
+        .from('studentRequests')
+        .select('scheduleDate, currentStatus, tutorComment')
+        .eq('studentID', user.id)
+        .single();
+    if(error){
+        console.error("Could not fetch test date: ", error);
+        return;
+    }
+
+    const scheduledDateText = document.getElementById('scheduledDateText');
+    const scheduledDateStatus = document.getElementById('scheduledDateStatus');
+    const scheduledDateComment = document.getElementById('scheduledDateComment');
+
+    scheduledDateText.textContent = `Scheduled date: ${data.scheduleDate}`;
+    scheduledDateStatus.textContent = `Status: ${data.currentStatus}`;
+    scheduledDateComment.textContent = `Tutor comment: ${data.tutorComment}`;
+}
+
+async function renderDashboard(){
     changeSection(dashboardSection);
     await fetchName();
 
@@ -361,14 +407,14 @@ async function renderDashboard() {
     const quickInformationEnglish = document.getElementById('skillsListReading');
     const quickInformationMathematics = document.getElementById('skillsListMathematics');
 
-    if (!quickInformationEnglish || !quickInformationMathematics) {
-        console.warn("Dashboard containers not found. Skipping render.");
+    if(!quickInformationEnglish || !quickInformationMathematics){
+        console.warn("No data for user.");
         return;
     }
 
     let temporaryTextHolder1 = '';
     const englishLimit = Math.min(3, userStatistics.English.length);
-    for (let i = 0; i < englishLimit; i++) {
+    for(let i = 0; i < englishLimit; i++){
         const statistics = userStatistics.English[i];
         temporaryTextHolder1 += `
             <div class="skillsListReading">
@@ -381,7 +427,7 @@ async function renderDashboard() {
 
     let temporaryTextHolder2 = '';
     const mathematicsLimit = Math.min(3, userStatistics.Mathematics.length);
-    for (let i = 0; i < mathematicsLimit; i++) {
+    for(let i = 0; i < mathematicsLimit; i++){
         const statistics = userStatistics.Mathematics[i];
         temporaryTextHolder2 += `
             <div class="skillsListMathematics">
@@ -400,19 +446,27 @@ document.querySelectorAll('.menuButton').forEach(button => {
         const action = button.getAttribute('data-action');
         const targetSection = document.getElementById(targetId);
 
-        if (action === 'logout') {
+        if(action === 'logout'){
             try {
                 await client.auth.signOut();
                 localStorage.removeItem('lastViewedSection');
                 changeSection(targetSection);
-            } catch (error) {
+            } catch (error){
                 console.error("Error signing out:", error);
             }
             return;
         }
 
-        if (targetId) {
-            if (targetSection) {
+        if(targetId === 'dashboardSection'){
+            await renderDashboard();
+        }
+
+        if(targetId === 'scheduleTestSection'){
+            await fetchScheduleTestDate();
+        }
+
+        if(targetId){
+            if(targetSection){
                 changeSection(targetSection);
                 localStorage.setItem('lastViewedSection', targetId);
             }
@@ -433,7 +487,7 @@ startDiagnostic.addEventListener('click', async () => {
         .from(diagnosticTableName)
         .select('*');
 
-    if (error) {
+    if(error){
         console.error("Fetch failed:", error);
         return;
     }
@@ -467,6 +521,22 @@ startPracticeReadingButton.addEventListener('click', async () => {
         .eq('id', user.id)
         .single();
 
+    const { count: totalReadingQuestions, error: totalReadingQuestionsError } = await client
+        .from('AllReadingQuestions')
+        .select('*', { count: 'exact', head: true});
+    
+    const { count: answeredReadingQuestionsCount, error: answeredReadingQuestionsCountError } = await client
+        .from('userResponses')
+        .select('*', { count: 'exact', head: true})
+        .eq('id', user.id)
+        .eq('subject', 'English');
+
+
+    if(answeredReadingQuestionsCount >= totalReadingQuestions){
+        alert("You have answered all reading questions. Please reset your data in profile, if you wish to continue practicing.");
+        return;
+    }
+
     if(data.ReadingDiagnosticCompleted === false){
         diagnosticSubject = "English";
         changeSection(diagnosticSection);
@@ -474,7 +544,7 @@ startPracticeReadingButton.addEventListener('click', async () => {
         try {
             const questionsData = await adaptiveAlgorithm('English');
             startQuiz(questionsData);
-        } catch (error) {
+        } catch(error){
             console.error("Failed to fetch questions: ", error);
         }
     }
@@ -489,6 +559,22 @@ startPracticeMathButton.addEventListener('click', async () => {
         .eq('id', user.id)
         .single();
 
+    const { count: totalMathQuestions, error: totalMathQuestionsError } = await client
+        .from('AllMathQuestions')
+        .select('*', { count: 'exact', head: true});
+    
+    const { count: answeredMathQuestionsCount, error: answeredMathQuestionsCountError } = await client
+        .from('userResponses')
+        .select('*', { count: 'exact', head: true})
+        .eq('id', user.id)
+        .eq('subject', 'Math');
+
+
+    if(answeredMathQuestionsCount >= totalMathQuestions){
+        alert("You have answered all math questions. Please reset your data in profile, if you wish to continue practicing.");
+        return;
+    }
+
     if(data.MathDiagnosticCompleted === false){
         try {
             const { data, error } = await client
@@ -496,14 +582,14 @@ startPracticeMathButton.addEventListener('click', async () => {
                 .select('*');
             questionsData = data;
             changeSection(diagnosticSection);
-        } catch (error) {
+        } catch (error){
             console.error("Failed to fetch questions: ", error);
         }
     } else {
         try {
             questionsData = await adaptiveAlgorithm('Mathematics');
             startQuiz(questionsData);
-        } catch (error) {
+        } catch (error){
             console.error("Failed to fetch questions: ", error);
         }
     }
@@ -525,10 +611,10 @@ document.addEventListener("visibilitychange", () => {
     }
 });
 
-async function pullQuestion(questionAmount) {
+async function pullQuestion(questionAmount){
     const container = document.getElementById('practiceSection');
 
-    if (currentQuestionIndex >= questionAmount) {
+    if(currentQuestionIndex >= questionAmount){
         isQuizActive = false;
         clearInterval(liveCounter);
 
@@ -593,14 +679,14 @@ async function pullQuestion(questionAmount) {
     startTime = performance.now();
 
     const form = document.getElementById('quizForm');
-    form.addEventListener('submit', async function (event) {
+    form.addEventListener('submit', async function(event){
         event.preventDefault();
         const endTime = performance.now();
         const timeElapsedMs = endTime - startTime;
         const totalSeconds = Math.floor(timeElapsedMs / 1000);
         let isCorrectBoolean;
 
-        if (liveCounter) {
+        if (liveCounter){
             clearInterval(liveCounter);
             liveCounter = null;
         }
@@ -608,10 +694,10 @@ async function pullQuestion(questionAmount) {
         const formData = new FormData(form);
         const userChoice = formData.get('answer');
 
-        if (userChoice == "Incorrect") {
+        if(userChoice == "Incorrect"){
             isCorrectBoolean = false;
             questionIncorrect++;
-        } else if (userChoice == "Correct") {
+        } else if (userChoice == "Correct"){
             isCorrectBoolean = true;
             questionCorrect++;
         } else {
@@ -634,7 +720,7 @@ async function pullQuestion(questionAmount) {
                 subject: q.subject
             }]);
 
-        if (error) {
+        if(error){
             console.error("Issue with inserting: ", error);
         }
         currentQuestionIndex++;
@@ -729,7 +815,7 @@ async function fetchDashboardInformation(){
 //How do we decide what questions to fetch? Decide based on the statistics (their accuracy), however we also have to fetch other questions
 //so the student doesn't only have to do one domain of questions. 
 
-async function adaptiveAlgorithm(databaseName) {
+async function adaptiveAlgorithm(databaseName){
     const userStatistics = await fetchDashboardInformation();
     const { data: { user } } = await client.auth.getUser();
 
@@ -742,7 +828,7 @@ async function adaptiveAlgorithm(databaseName) {
     //Create a map to store the questionIDs
     const answeredIds = [];
 
-    if (data) {
+    if(data){
         for(const item of data){
             answeredIds.push(item.questionID);
         }

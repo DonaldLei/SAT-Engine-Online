@@ -16,8 +16,8 @@
         <h1>ClearPillar</h1>
         <nav class = "mainTabs">
             <button class="menuButton" data-target="dashboardSection">Dashboard</button>
-            <button class="menuButton">Profile</button>
-            <button class="menuButton">Statistics</button>
+            <button class="menuButton" data-target="profileSection">Profile</button>
+            <button class="menuButton" data-target="statisticsSection">Statistics</button>
             <button class="menuButton" data-target="scheduleTestSection">Schedule Test Request</button>
             <button class="menuButton">Messages</button>
             <button class="menuButton" data-target="welcomeSection" data-action="logout">Logout</button>
@@ -102,7 +102,7 @@
                 </div>
         
                 <div class="startPractice">
-                    <h2 id="tasksInfo">Your tasks for today</h1>
+                    <h2 id="tasksInfo">Start Practice</h1>
                         <div class="startPracticeContainer">
                             <div class="startPracticeCard">
                                 <div>
@@ -140,7 +140,60 @@
                 </div>
             </div>
         </div>
-        
+
+        <div id="profileSection" class="viewApp hidden">
+            <div class="userProfileContainer">
+                <!-- Will be the section where the user can reset their question data, change any data about them in the user profile -->
+                <h1>Your profile:</h1>
+            </div>
+        </div>
+
+        <div id="statisticsSection" class="viewApp hidden">
+            <div class="statisticsContainer">
+                <h1>Your Statistics</h1>
+
+                <h2>Reading & Writing</h2>
+                <!-- Starter chart code -->
+                <div id = "chartContainer">
+                    <canvas id="readingDomain1"></canvas>
+                </div>
+                
+                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                
+                <script>
+                    const ctx = document.getElementById('readingDomain1');
+
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Central Ideas and Details', 'Inferences', 'Command of Evidence'],
+                            datasets: [{
+                                label: 'Accuracy',
+                                data: [12, 19, 3],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            response: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Information and Ideas',
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true
+                                }
+                            }
+                        }
+                    });
+                </script>
+
+            </div>
+        </div>
+
         <div id="userSetupSection" class="viewApp hidden">
             <form id="userProfileForm">
                 <h1>Set up your profile:</h1>
@@ -205,6 +258,8 @@
                 <div class="scheduleForm">
                     <h1>Schedule your next test date</h1>
                     <p>Send a request to your tutor to confirm your test scheduling.</p>
+                    <p>If you wish to reschedule, submit another test date to override your previous request. 
+                        If you already have received approval from your tutor previously, you do not need approval for your rescheduled date.</p>
                     <form id="scheduleTestDate">
                         <div id="dateSelector">
                             <label for="testDate">Next test date:</label>
@@ -215,22 +270,21 @@
                 </div>
             
                 <div class="scheduleRequests">
-                    <h2>Your schedule requests:</h2>
+                    <h2>Your schedule request:</h2>
                     <div id="scheduleRequestsContainer">
                         <div>
-                            <p id="scheduledDateText">Scheduled date:</p>
+                            <p id="scheduledDateText"></p>
                         </div>
 
                         <div>
-                            <p id="scheduledDateStatus">Status:</p>
+                            <p id="scheduledDateStatus"></p>
                         </div>
 
                         <div>
-                            <p id="scheduledDateComment">Comment:</p>
+                            <p id="scheduledDateComment"></p>
                         </div>
                     </div>
                 </div>
-            
             </div>
         </div>
     </div>
