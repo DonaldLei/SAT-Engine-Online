@@ -198,10 +198,9 @@ authSubmit.addEventListener("click", async () => {
             
             if(error){
                 console.error("Could not fetch user: ", error);
-                return;
             }
             
-            if(!data.first_name && !data.last_name){
+            if(!data.first_name || !data.last_name){
                 changeSection(userSetupSection);
             } else {
                 await renderDashboard();
@@ -297,12 +296,20 @@ document.getElementById('backToWelcome').addEventListener('click', () => {
     changeSection(welcomeSection);
 });
 
+document.getElementById('backToWelcome1').addEventListener('click', () => {
+    modal.style.display = 'none';
+    changeSection(welcomeSection);
+});
+
 userProfileForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
     const formData = new FormData(event.target);
 
+    const { data: { user } } = await client.auth.getUser();
+
     const userProfileData = {
+        id: user.id,
         first_name: formData.get('firstName'),
         last_name: formData.get('lastName'),
         currentGrade: formData.get('gradeLevel'),
@@ -311,26 +318,24 @@ userProfileForm.addEventListener('submit', async (event) => {
         currentScore: formData.get('currentScore')
     }
     
-    const { data: { user } } = await client.auth.getUser();
-
     const { data, error } = await client
         .from('userProfiles')
-        .update(userProfileData)
-        .eq('id', user.id)
+        .upsert(userProfileData)
         .select();
 
-        if(error){
-            console.error("Error: ", error);
-            return;
-        }
+    if(error){
+        console.error("Error: ", error);
+        return;
+    }
 
-        if(data){
-            console.log("Profile updated!");
-            changeSection(dashboardSection);
-            fetchName();
-        } else {
-            alert("Profile could not be updated!");
-        }
+    if(data){
+        console.log("Profile updated!");
+        await fetchDashboardInformation();
+        changeSection(dashboardSection);
+        await fetchName();
+    } else {
+        alert("Profile could not be updated!");
+    }
 });
 
 //Insert new scheduling into the database for tutors, can only send one request at a time, will only display one request
@@ -527,10 +532,11 @@ startPracticeReadingButton.addEventListener('click', async () => {
     
     const { count: answeredReadingQuestionsCount, error: answeredReadingQuestionsCountError } = await client
         .from('userResponses')
-        .select('*', { count: 'exact', head: true})
+        .select('questionID', { count: 'exact', head: true})
         .eq('id', user.id)
         .eq('subject', 'English');
-
+    
+        console.log(answeredReadingQuestionsCount,totalReadingQuestions);
 
     if(answeredReadingQuestionsCount >= totalReadingQuestions){
         alert("You have answered all reading questions. Please reset your data in profile, if you wish to continue practicing.");
@@ -551,6 +557,11 @@ startPracticeReadingButton.addEventListener('click', async () => {
 });
 
 startPracticeMathButton.addEventListener('click', async () => {
+    currentQuestionIndex = 0;
+    questionCorrect = 0;
+    questionIncorrect = 0;
+    hasLeftTheScreen = false;
+
     const { data: { user } } = await client.auth.getUser();
 
     const{ data, error } = await client
@@ -565,10 +576,11 @@ startPracticeMathButton.addEventListener('click', async () => {
     
     const { count: answeredMathQuestionsCount, error: answeredMathQuestionsCountError } = await client
         .from('userResponses')
-        .select('*', { count: 'exact', head: true})
+        .select('questionID', { count: 'exact', head: true})
         .eq('id', user.id)
         .eq('subject', 'Math');
 
+    console.log(answeredMathQuestionsCount, totalMathQuestions);
 
     if(answeredMathQuestionsCount >= totalMathQuestions){
         alert("You have answered all math questions. Please reset your data in profile, if you wish to continue practicing.");
@@ -576,18 +588,11 @@ startPracticeMathButton.addEventListener('click', async () => {
     }
 
     if(data.MathDiagnosticCompleted === false){
-        try {
-            const { data, error } = await client
-                .from('diagnosticMathQuestions')
-                .select('*');
-            questionsData = data;
-            changeSection(diagnosticSection);
-        } catch (error){
-            console.error("Failed to fetch questions: ", error);
-        }
+        diagnosticSubject = "Math";
+        changeSection(diagnosticSection);
     } else {
         try {
-            questionsData = await adaptiveAlgorithm('Mathematics');
+            const questionsData = await adaptiveAlgorithm('Mathematics');
             startQuiz(questionsData);
         } catch (error){
             console.error("Failed to fetch questions: ", error);

@@ -52,14 +52,20 @@ body {
     flex-grow: 1;
     width: 100%;
 }
-
+#userSetupSection {
+    background-color: #EFEFEF;
+    min-height: 100vh; /* Forces the section to be at least the height of the screen */
+    width: 100%;
+    padding: 20px;     /* Prevents content from touching the very edge */
+    box-sizing: border-box; /* Important: prevents padding from breaking the width */
+}
 /* set up user profile */
 #userProfileForm {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: white;
+    background-color: #EFEFEF;
 }
 
 #chooseGrade {
@@ -117,6 +123,7 @@ body {
     width: 500px;
 }
 #diagnosticSection {
+    min-height: 100vh;
     background-color: #EFEFEF;
 }
 
