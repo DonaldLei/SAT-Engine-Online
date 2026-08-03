@@ -105,6 +105,12 @@ body {
     background-color: #EFEFEF;
 }
 
+.resetUserResponseDataContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
 /* .userProfileContainer {
 
 } */
@@ -117,11 +123,15 @@ body {
     background-color: #EFEFEF;
 }
 
-#chartContainer {
+#chartReadingContainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     position: relative;
     height: 300px; 
     width: 500px;
+    gap:20px;
 }
+
 #diagnosticSection {
     min-height: 100vh;
     background-color: #EFEFEF;

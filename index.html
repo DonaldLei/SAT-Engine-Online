@@ -128,14 +128,20 @@
         
                 <div id="quickInfoContainer">
                     <h2>Quick Information</h2>
-                    <div class="quickInfoReading">
-                        <h3>Top 3 Reading & English Skills to Improve:</h3>
-                        <div id="skillsListReading"></div>
-                    </div>
+                    <div class="quickInfoSubject">
+                        <div class="quickInfoMathematics">
+                            <h3>Top 3 Reading & English Skills to Improve:</h3>
+                            <div id="skillsListReading"></div>
+                        </div>
         
-                    <div class="quickInfoMathematics">
-                        <h3>Top 3 Mathematics Skills to Improve:</h3>
-                        <div id="skillsListMathematics"></div>
+                        <div class="quickInfoMathematics">
+                            <h3>Top 3 Mathematics Skills to Improve:</h3>
+                            <div id="skillsListMathematics"></div>
+                        </div>
+                    </div>
+
+                    <div class="quickInfoQuestionCompletion">
+
                     </div>
                 </div>
             </div>
@@ -143,8 +149,20 @@
 
         <div id="profileSection" class="viewApp hidden">
             <div class="userProfileContainer">
-                <!-- Will be the section where the user can reset their question data, change any data about them in the user profile -->
-                <h1>Your profile:</h1>
+                <h1>Your profile</h1>
+                <div class ="userProfileInformation">
+                    <p>First Name:</p>
+                    <p>Last Name:</p>
+                    <p>Current Grade:</p>
+                    <p>Target College Application Deadline:</p>
+                    <p>Test Attempts:</p>
+                    <p>Current Score:</p>
+                </div>
+                <div class ="resetUserResponseDataContainer">
+                    <p id ="resetDisclaimer">If you have completed all questions in a subject, feel free to reset your progress and practice again. </p>
+                    <button id="resetEnglishUserResponseData">Reset English</button>
+                    <button id="resetMathUserResponseData">Reset Mathematics</button>
+                </div>
             </div>
         </div>
 
@@ -153,42 +171,24 @@
                 <h1>Your Statistics</h1>
 
                 <h2>Reading & Writing</h2>
-                <!-- Starter chart code -->
-                <div id = "chartContainer">
-                    <canvas id="readingDomain1"></canvas>
+                <div id = "chartReadingContainer">
+                    <canvas id="chart-1"></canvas>
+                    <canvas id="chart-2"></canvas>
+                    <canvas id="chart-3"></canvas>
+                    <canvas id="chart-4"></canvas>
+                </div>
+
+                <h2>Mathematics</h2>
+                <div id = "chartMathContainer">
+                    <canvas id="chart-5"></canvas>
+                    <canvas id="chart-6"></canvas>
+                    <canvas id="chart-7"></canvas>
+                    <canvas id="chart-8"></canvas>
                 </div>
                 
                 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                 
                 <script>
-                    const ctx = document.getElementById('readingDomain1');
-
-                    new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: ['Central Ideas and Details', 'Inferences', 'Command of Evidence'],
-                            datasets: [{
-                                label: 'Accuracy',
-                                data: [12, 19, 3],
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            response: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                title: {
-                                    display: true,
-                                    text: 'Information and Ideas',
-                                }
-                            },
-                            scales: {
-                                y: {
-                                    beginAtZero: true
-                                }
-                            }
-                        }
-                    });
                 </script>
 
             </div>

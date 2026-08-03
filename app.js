@@ -9,6 +9,7 @@ let hasLeftTheScreen = false;
 let startTime = null;
 let liveCounter = null;
 let diagnosticSubject = '';
+const chartInstances = {};
 
 //Supabase authentication and sign up
 const SUPABASE_URL = "https://yksokqpgtusgdvnerfsc.supabase.co";
@@ -444,6 +445,66 @@ async function renderDashboard(){
     quickInformationMathematics.innerHTML = temporaryTextHolder2;
 }
 
+function createChart(canvasId, domainData) {
+    const ctx = document.getElementById(canvasId).getContext('2d');
+
+    if(chartInstances[canvasId]){
+        chartInstances[canvasId].destroy();
+    }
+
+    chartInstances[canvasId] = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: [domainData.domainName],
+            datasets: [{
+                label: 'Accuracy %',
+                data: [domainData.domainAccuracy],
+                backgroundColor: '#89CFF0'
+            }]
+        },
+        options: { 
+            responsive: true, 
+            
+            scales: { 
+                y: { max: 100 } 
+            } 
+        }
+    });
+}
+
+async function renderStatisticsTab() {
+    const stats = await fetchDashboardInformation();
+    const readingStats = stats.English;
+    const mathStats = stats.Mathematics;
+
+    for (let i = 1; i <= 4; i++) {
+        const canvasId = `chart-${i}`;
+        const currentCanvas = document.getElementById(canvasId);
+        const chartData = readingStats[i - 1];
+        if(currentCanvas){
+            if(chartData){
+                currentCanvas.style.display = 'block';
+                createChart(canvasId, chartData);
+            }
+        } else {
+            currentCanvas.style.display = 'none';
+        }
+    }
+
+    for (let i = 5; i <= 8; i++) {
+        const canvasId = `chart-${i}`;
+        const currentCanvas = document.getElementById(canvasId);
+        const chartData = mathStats[i - 5];
+        if(currentCanvas){
+            if(chartData){
+                currentCanvas.style.display = 'block';
+                createChart(canvasId, chartData);
+            }
+        } else {
+            currentCanvas.style.display = 'none';
+        }
+    }
+}
 
 document.querySelectorAll('.menuButton').forEach(button => {
     button.addEventListener('click', async () => {
@@ -468,6 +529,10 @@ document.querySelectorAll('.menuButton').forEach(button => {
 
         if(targetId === 'scheduleTestSection'){
             await fetchScheduleTestDate();
+        }
+
+        if(targetId === 'statisticsSection'){
+            await renderStatisticsTab();
         }
 
         if(targetId){
@@ -535,8 +600,6 @@ startPracticeReadingButton.addEventListener('click', async () => {
         .select('questionID', { count: 'exact', head: true})
         .eq('id', user.id)
         .eq('subject', 'English');
-    
-        console.log(answeredReadingQuestionsCount,totalReadingQuestions);
 
     if(answeredReadingQuestionsCount >= totalReadingQuestions){
         alert("You have answered all reading questions. Please reset your data in profile, if you wish to continue practicing.");
@@ -579,8 +642,6 @@ startPracticeMathButton.addEventListener('click', async () => {
         .select('questionID', { count: 'exact', head: true})
         .eq('id', user.id)
         .eq('subject', 'Math');
-
-    console.log(answeredMathQuestionsCount, totalMathQuestions);
 
     if(answeredMathQuestionsCount >= totalMathQuestions){
         alert("You have answered all math questions. Please reset your data in profile, if you wish to continue practicing.");
@@ -683,8 +744,8 @@ async function pullQuestion(questionAmount){
 
     startTime = performance.now();
 
-    const form = document.getElementById('quizForm');
-    form.addEventListener('submit', async function(event){
+    const quizForm = document.getElementById('quizForm');
+    quizForm.addEventListener('submit', async function(event){
         event.preventDefault();
         const endTime = performance.now();
         const timeElapsedMs = endTime - startTime;
@@ -696,42 +757,101 @@ async function pullQuestion(questionAmount){
             liveCounter = null;
         }
 
-        const formData = new FormData(form);
+        const formData = new FormData(quizForm);
         const userChoice = formData.get('answer');
 
         if(userChoice == "Incorrect"){
             isCorrectBoolean = false;
             questionIncorrect++;
+            container.innerHTML = `        
+            <div class="question-box">
+                <p>Classify your error: </p>
+                <form id="errorForm">
+                    <label>
+                        <input type="radio" name="answer" value="Content"> Content
+                    </label><br>
+                    <label>
+                        <input type="radio" name="answer" value="Process"> Process
+                    </label><br>
+                    <label>
+                        <input type="radio" name="answer" value="Careless"> Careless
+                    </label><br>
+                    <label>
+                        <input type="radio" name="answer" value="Time"> Time
+                    </label><br>
+                    <button type="submit">Submit</button>
+                </form>
+            </div>`;
+
+            const errorForm = document.getElementById('errorForm');
+
+            errorForm.addEventListener('submit', async function(event){
+                event.preventDefault();
+                const formData = new FormData(errorForm);
+                const userErrorClassification = formData.get('answer');
+
+                if(!userErrorClassification){
+                    alert("Please classify your error");
+                    return;
+                }
+
+                const { data: { user } } = await client.auth.getUser();
+
+                const { data, error } = await client
+                    .from('userResponses')
+                    .insert([{
+                        id: user.id,
+                        questionID: q.questionID,
+                        questionDomain: q.questionDomain,
+                        questionSkill: q.questionSkill,
+                        difficulty: q.questionDifficulty,
+                        timeElapsed: totalSeconds,
+                        isCorrect: isCorrectBoolean,
+                        subject: q.subject,
+                        errorType: userErrorClassification
+                    }]);
+                
+                if(error){
+                    console.error("Issue with inserting: ", error);
+                }
+
+                currentQuestionIndex++;
+                hasLeftTheScreen = false;
+                startTime = null;
+                pullQuestion(questionAmount);
+            });
+            
         } else if (userChoice == "Correct"){
             isCorrectBoolean = true;
             questionCorrect++;
+            const { data: { user } } = await client.auth.getUser();
+
+            const { data, error } = await client
+                .from('userResponses')
+                .insert([{
+                    id: user.id,
+                    questionID: q.questionID,
+                    questionDomain: q.questionDomain,
+                    questionSkill: q.questionSkill,
+                    difficulty: q.questionDifficulty,
+                    timeElapsed: totalSeconds,
+                    isCorrect: isCorrectBoolean,
+                    subject: q.subject
+                }]);
+
+            if(error){
+                console.error("Issue with inserting: ", error);
+            }
+
+            currentQuestionIndex++;
+            hasLeftTheScreen = false;
+            startTime = null;
+            pullQuestion(questionAmount);
+
         } else {
             alert("Choose an option.");
             return;
         }
-
-        const { data: { user } } = await client.auth.getUser();
-
-        const { data, error } = await client
-            .from('userResponses')
-            .insert([{
-                id: user.id,
-                questionID: q.questionID,
-                questionDomain: q.questionDomain,
-                questionSkill: q.questionSkill,
-                difficulty: q.questionDifficulty,
-                timeElapsed: totalSeconds,
-                isCorrect: isCorrectBoolean,
-                subject: q.subject
-            }]);
-
-        if(error){
-            console.error("Issue with inserting: ", error);
-        }
-        currentQuestionIndex++;
-        hasLeftTheScreen = false;
-        startTime = null;
-        pullQuestion(questionAmount);
     });
 }
 
@@ -796,6 +916,7 @@ async function fetchDashboardInformation(){
     }
 
     const userStatistics = { English: [], Mathematics: [] };  
+
     for(const questionSubject in questionMap){
         for(const questionDomain in questionMap[questionSubject]){
             const questionGroup = questionMap[questionSubject][questionDomain];
@@ -859,7 +980,6 @@ async function adaptiveAlgorithm(databaseName){
             .eq('questionDomain', questionDomainName.domainName)
             .limit(3);
         
-
         if(answeredIds.length > 0){
             query = query.not('questionID', 'in', `(${answeredIds.join(',')})`);
         }
