@@ -101,8 +101,20 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if(targetSection.id === 'scheduleTestSection'){
                     await fetchScheduleTestDate();
                 }
+
+                if(targetSection.id === 'profileSection'){
+                    await renderProfile();
+                }
+
+                if(targetSection.id === 'statisticsSection'){
+                    await renderStatistics();
+                }
+
             } else {
                 await renderDashboard();
+                await fetchScheduleTestDate();
+                await renderProfile();
+                await renderStatistics();
             }
         }
     } else {
@@ -249,6 +261,11 @@ const scheduleTestSection = document.getElementById('scheduleTestSection');
 const diagnosticSection = document.getElementById('diagnosticSection');
 const profileSection = document.getElementById('profileSection');
 const statisticsSection = document.getElementById('statisticsSection');
+
+//View DOM
+const statisticsCharts = document.getElementById('statisticsCharts');
+const statisticsQuestions = document.getElementById('statisticsQuestions');
+
 //Button DOM
 const enterPortalButton = document.getElementById('enterPortalButton');
 const logoutButton = document.getElementById('logout');
@@ -302,6 +319,18 @@ document.getElementById('backToWelcome1').addEventListener('click', () => {
     changeSection(welcomeSection);
 });
 
+document.getElementById('viewQuestionHistory').addEventListener('click', async (event) => {
+    statisticsCharts.classList.add('hidden');
+    statisticsQuestions.classList.remove('hidden');
+
+    await renderAnsweredQuestions();
+});
+
+document.getElementById('viewStatisticsCharts').addEventListener('click', () => {
+    statisticsQuestions.classList.add('hidden');
+    statisticsCharts.classList.remove('hidden');
+});
+
 userProfileForm.addEventListener('submit', async (event) => {
     event.preventDefault();
 
@@ -344,8 +373,15 @@ scheduleTestDate.addEventListener('submit', async (event) => {
     event.preventDefault();
     
     const formData = new FormData(event.target);
+    const testDateString = formData.get('testDate');
 
-    const testDateScheduled = formData.get('testDate');
+    const testDateScheduled = new Date(testDateString);
+
+    const registrationDeadlineDate = new Date(testDateScheduled);
+
+    registrationDeadlineDate.setDate(testDateScheduled.getDate() - 4);
+
+    console.log(registrationDeadlineDate);
 
     const { data: { user } } = await client.auth.getUser();
 
@@ -366,7 +402,9 @@ scheduleTestDate.addEventListener('submit', async (event) => {
             studentID: user.id,
             scheduleDate: testDateScheduled,
             studentFirstName: studentName.first_name,
-            studentLastName: studentName.last_name
+            studentLastName: studentName.last_name,
+            registrationDeadline: registrationDeadlineDate,
+            registrationStatus: 'Not registered'
         }, { onConflict: 'studentID' });
 
     if(error){
@@ -383,12 +421,28 @@ scheduleTestDate.addEventListener('submit', async (event) => {
     await fetchScheduleTestDate();
 });
 
+// function scheduleCheck(){
+   
+//     const { data: { user } } = await client.auth.getUser();    
+
+//     const { data, error } = await client
+//         .from('studentRequests')
+//         .select('*')
+//         .eq('studentID', user.id)
+//         .single();
+    
+//     //If there is a test date scheduled
+//     if(data && ){
+
+//     }
+// }
+
 async function fetchScheduleTestDate(){
     const { data: { user } } = await client.auth.getUser();
 
     const { data, error } = await client
         .from('studentRequests')
-        .select('scheduleDate, currentStatus, tutorComment')
+        .select('scheduleDate, registrationDeadline, registrationStatus')
         .eq('studentID', user.id)
         .single();
     if(error){
@@ -397,18 +451,59 @@ async function fetchScheduleTestDate(){
     }
 
     const scheduledDateText = document.getElementById('scheduledDateText');
-    const scheduledDateStatus = document.getElementById('scheduledDateStatus');
-    const scheduledDateComment = document.getElementById('scheduledDateComment');
+    const registrationDeadline = document.getElementById('registrationDeadline');
+    const registrationStatus = document.getElementById('registrationStatus');
 
     scheduledDateText.textContent = `Scheduled date: ${data.scheduleDate}`;
-    scheduledDateStatus.textContent = `Status: ${data.currentStatus}`;
-    scheduledDateComment.textContent = `Tutor comment: ${data.tutorComment}`;
+    registrationDeadline.textContent = `Registration deadline: ${data.registrationDeadline}`;
+    registrationStatus.textContent = `Registration status: ${data.registrationStatus}`;
 }
 
 async function renderDashboard(){
     changeSection(dashboardSection);
     await fetchName();
 
+    const importantReminders = document.getElementById('importantReminders');
+
+    const { data: { user } } = await client.auth.getUser();
+
+    const { data, error } = await client
+        .from('studentRequests')
+        .select('*')
+        .eq('studentID', user.id)
+        .maybeSingle();
+
+    if(error){
+        console.error("Error fetching registration status:", error);
+        return;
+    }
+
+    if(data && data.registrationStatus === 'Not registered'){
+        importantReminders.innerHTML = `
+        <h2 id = "remindersHeader">Important Reminders:</h2>
+        <p>Have you completed your registration for your test scheduled for ${data.scheduleDate}?</p>
+        <button id='confirmRegistrationButton'>Confirm Registration</button>
+        `
+        
+        document.getElementById('confirmRegistrationButton').addEventListener('click', async (event) => {
+            const { data: { user } } = await client.auth.getUser();
+
+            const { data, error } = await client
+                .from('studentRequests')
+                .update({ registrationStatus: 'Registered' })
+                .eq('studentID', user.id)
+
+            if (error) {
+                console.error("Request could not be found: ", error);
+                return;
+            }
+
+            alert("Registration status has been updated!");
+            
+            //Clear reminders
+            importantReminders.innerHTML = ``;
+        });
+    }
     const userStatistics = await fetchDashboardInformation();
     const quickInformationEnglish = document.getElementById('skillsListReading');
     const quickInformationMathematics = document.getElementById('skillsListMathematics');
@@ -445,6 +540,39 @@ async function renderDashboard(){
     quickInformationMathematics.innerHTML = temporaryTextHolder2;
 }
 
+async function renderProfile(){
+    changeSection(profileSection);
+    
+    const { data: { user } } = await client.auth.getUser();
+
+    const { data, error } = await client
+        .from('userProfiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+    
+    if(error){
+        console.error("Issue with fetching user profile: ", error);
+        return;
+    }
+
+    const firstNameText = document.getElementById('firstNameText');
+    const lastNameText = document.getElementById('lastNameText');
+    const gradeText = document.getElementById('gradeText');
+    const targetDateText = document.getElementById('targetDateText');
+    const testAttemptsText = document.getElementById('testAttemptsText');
+    const currentScoreText = document.getElementById('currentScoreText');
+
+    firstNameText.innerHTML = `First Name: ${data.first_name}`;
+    lastNameText.innerHTML = `Last Name: ${data.last_name}`;
+    gradeText.innerHTML = `Current Grade: ${data.currentGrade}`;
+    targetDateText.innerHTML = `Target College Application Deadline: ${data.targetApplicationDeadline}`;
+    testAttemptsText.innerHTML = `Test Attempts: ${data.satAttempts}`;
+    currentScoreText.innerHTML = `Current Score: ${data.currentScore}`;
+
+    //Make it a form where any changes that they make will be updated. 
+}
+
 function createChart(canvasId, domainData) {
     const ctx = document.getElementById(canvasId).getContext('2d');
 
@@ -472,7 +600,7 @@ function createChart(canvasId, domainData) {
     });
 }
 
-async function renderStatisticsTab() {
+async function renderStatistics() {
     const stats = await fetchDashboardInformation();
     const readingStats = stats.English;
     const mathStats = stats.Mathematics;
@@ -506,6 +634,36 @@ async function renderStatisticsTab() {
     }
 }
 
+async function renderAnsweredQuestions(){
+    const { data: { user } } = await client.auth.getUser();
+
+    const { data, error } = await client
+        .from('userResponses')
+        .select('*')
+        .eq('id', user.id)
+
+    if(error){
+        console.error("User has not answered any questions:", error);
+        return;
+    }
+
+    const allQuestionsAnsweredContainer = document.getElementById('allQuestionsAnsweredContainer');
+    
+    let tempText = '';
+
+    for(let i = 0; i < data.length; i++){
+        const item = data[i];
+        tempText += `
+            <div class="allQuestionsAnsweredContainer">
+                <ul>
+                    <li><p>Question ID: ${item.questionID} | Subject: ${item.subject} | Question Domain: ${item.questionDomain} | Question Skill: ${item.questionSkill} | Difficulty: ${item.difficulty} | Time Elapsed: ${item.timeElapsed} | Answered Correctly: ${item.isCorrect}</p></li>
+                </ul>
+            </div>
+        `
+    }
+    allQuestionsAnsweredContainer.innerHTML = tempText;
+}
+
 document.querySelectorAll('.menuButton').forEach(button => {
     button.addEventListener('click', async () => {
         const targetId = button.getAttribute('data-target');
@@ -532,7 +690,11 @@ document.querySelectorAll('.menuButton').forEach(button => {
         }
 
         if(targetId === 'statisticsSection'){
-            await renderStatisticsTab();
+            await renderStatistics();
+        }
+
+        if(targetId === 'profileSection'){
+            await renderProfile();
         }
 
         if(targetId){
@@ -808,7 +970,8 @@ async function pullQuestion(questionAmount){
                         timeElapsed: totalSeconds,
                         isCorrect: isCorrectBoolean,
                         subject: q.subject,
-                        errorType: userErrorClassification
+                        errorType: userErrorClassification, 
+                        isDiagnostic: q.isDiagnostic
                     }]);
                 
                 if(error){

@@ -19,7 +19,6 @@
             <button class="menuButton" data-target="profileSection">Profile</button>
             <button class="menuButton" data-target="statisticsSection">Statistics</button>
             <button class="menuButton" data-target="scheduleTestSection">Schedule Test Request</button>
-            <button class="menuButton">Messages</button>
             <button class="menuButton" data-target="welcomeSection" data-action="logout">Logout</button>
         </nav>
     </div>
@@ -100,10 +99,14 @@
                     <h2 id="welcomeMessage"></h2>
                     <h3>Continue your work!</h3>
                 </div>
-        
+                
+                <div class ="remindersContainer">
+                    <div id ="importantReminders"></div>
+                </div>
+
                 <div class="startPractice">
-                    <h2 id="tasksInfo">Start Practice</h1>
                         <div class="startPracticeContainer">
+                            <h2 id="tasksInfo">Start Practice</h1>
                             <div class="startPracticeCard">
                                 <div>
                                     <p>Reading & Writing</p>
@@ -149,17 +152,19 @@
 
         <div id="profileSection" class="viewApp hidden">
             <div class="userProfileContainer">
-                <h1>Your profile</h1>
+                <h1>Your Profile</h1>
+                <h3>Make any updates to your current profile as needed.</h3>
+                <button id ="changeUserProfileButton">Change Information</button>
                 <div class ="userProfileInformation">
-                    <p>First Name:</p>
-                    <p>Last Name:</p>
-                    <p>Current Grade:</p>
-                    <p>Target College Application Deadline:</p>
-                    <p>Test Attempts:</p>
-                    <p>Current Score:</p>
+                    <p id="firstNameText">First Name:</p>
+                    <p id="lastNameText">Last Name:</p>
+                    <p id="gradeText">Current Grade:</p>
+                    <p id="targetDateText">Target College Application Deadline:</p>
+                    <p id="testAttemptsText">Test Attempts:</p>
+                    <p id="currentScoreText">Current Score:</p>
                 </div>
+                <p id ="resetDisclaimer">If you have completed all questions in a subject, feel free to reset your progress and practice again. </p>
                 <div class ="resetUserResponseDataContainer">
-                    <p id ="resetDisclaimer">If you have completed all questions in a subject, feel free to reset your progress and practice again. </p>
                     <button id="resetEnglishUserResponseData">Reset English</button>
                     <button id="resetMathUserResponseData">Reset Mathematics</button>
                 </div>
@@ -168,29 +173,34 @@
 
         <div id="statisticsSection" class="viewApp hidden">
             <div class="statisticsContainer">
-                <h1>Your Statistics</h1>
-
-                <h2>Reading & Writing</h2>
-                <div id = "chartReadingContainer">
-                    <canvas id="chart-1"></canvas>
-                    <canvas id="chart-2"></canvas>
-                    <canvas id="chart-3"></canvas>
-                    <canvas id="chart-4"></canvas>
+                <div id="statisticsCharts">
+                    <h1>Your Statistics</h1>
+                    <button id="viewQuestionHistory">View Question History</button>
+                    
+                    <h2>Reading & Writing Charts</h2>
+                    <div id="chartReadingContainer">
+                        <canvas id="chart-1"></canvas>
+                        <canvas id="chart-2"></canvas>
+                        <canvas id="chart-3"></canvas>
+                        <canvas id="chart-4"></canvas>
+                    </div>
+                    
+                    <h2>Mathematics Charts</h2>
+                    <div id="chartMathContainer">
+                        <canvas id="chart-5"></canvas>
+                        <canvas id="chart-6"></canvas>
+                        <canvas id="chart-7"></canvas>
+                        <canvas id="chart-8"></canvas>
+                    </div>
                 </div>
 
-                <h2>Mathematics</h2>
-                <div id = "chartMathContainer">
-                    <canvas id="chart-5"></canvas>
-                    <canvas id="chart-6"></canvas>
-                    <canvas id="chart-7"></canvas>
-                    <canvas id="chart-8"></canvas>
+                <div id="statisticsQuestions" class="hidden">
+                    <h1>Question History</h1>
+                    <button id="viewStatisticsCharts">View Charts</button>
+                    <div id="allQuestionsAnsweredContainer">
+                        
+                    </div>
                 </div>
-                
-                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-                
-                <script>
-                </script>
-
             </div>
         </div>
 
@@ -259,8 +269,7 @@
                 <div class="scheduleForm">
                     <h1>Schedule your next test date</h1>
                     <p>Send a request to your tutor to confirm your test scheduling.</p>
-                    <p>If you wish to reschedule, submit another test date to override your previous request. 
-                        If you already have received approval from your tutor previously, you do not need approval for your rescheduled date.</p>
+                    <p>If you wish to reschedule, submit another test date to override your previous request.</p>
                     <form id="scheduleTestDate">
                         <div id="dateSelector">
                             <label for="testDate">Next test date:</label>
@@ -278,11 +287,11 @@
                         </div>
 
                         <div>
-                            <p id="scheduledDateStatus"></p>
+                            <p id="registrationDeadline"></p>
                         </div>
 
                         <div>
-                            <p id="scheduledDateComment"></p>
+                            <p id="registrationStatus"></p>
                         </div>
                     </div>
                 </div>
@@ -291,6 +300,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script type = "module" src="app.js" defer></script>
 <script>
