@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <title>ClearPillar</title>
 </head>
 <body>
@@ -13,13 +14,13 @@
 
 <div id = "entireApp">
     <div id = "appSidebar" class = "sidebar">
-        <h1>ClearPillar</h1>
+        <button id="sidebarToggle"><i class="fa-solid fa-bars"></i></button>
         <nav class = "mainTabs">
-            <button class="menuButton" data-target="dashboardSection">Dashboard</button>
-            <button class="menuButton" data-target="profileSection">Profile</button>
-            <button class="menuButton" data-target="statisticsSection">Statistics</button>
-            <button class="menuButton" data-target="scheduleTestSection">Schedule Test Request</button>
-            <button class="menuButton" data-target="welcomeSection" data-action="logout">Logout</button>
+            <button class="menuButton" data-target="dashboardSection"><i class="fa-solid fa-house"></i><span class="menuLabel">Dashboard</span></button>
+            <button class="menuButton" data-target="profileSection"><i class="fa-solid fa-user"></i><span class="menuLabel">Profile</span></button>
+            <button class="menuButton" data-target="statisticsSection"><i class="fa-solid fa-chart-bar"></i><span class="menuLabel">Statistics</span></button>
+            <button class="menuButton" data-target="scheduleTestSection"><i class="fa-solid fa-calendar"></i><span class="menuLabel">Schedule Test Request</span></button>
+            <button class="menuButton" data-target="welcomeSection" data-action="logout"><i class="fa-solid fa-right-from-bracket"></i><span class="menuLabel">Logout</span></button>
         </nav>
     </div>
 
@@ -94,6 +95,7 @@
         
         <div id="dashboardSection" class="viewApp hidden">
             <div class="dashboardContainer">
+                <h1 class="dashboardBrand">ClearPillar</h1>
                 <div class="welcomeUserContainer">
                     <p><span id="current-date"></span></p>
                     <h2 id="welcomeMessage"></h2>

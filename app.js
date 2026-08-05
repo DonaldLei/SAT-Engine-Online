@@ -274,6 +274,10 @@ const startPracticeMathButton = document.getElementById('startPracticeMath');
 const userProfileForm = document.getElementById('userProfileForm');
 const menuButtons = document.querySelectorAll('.menuButton');
 const scheduleTestDate = document.getElementById('scheduleTestDate');
+
+document.getElementById('sidebarToggle').addEventListener('click', () => {
+    document.getElementById('appSidebar').classList.toggle('collapsed');
+});
 const startDiagnostic = document.getElementById('startDiagnostic');
 
 function changeSection(nextSection){
