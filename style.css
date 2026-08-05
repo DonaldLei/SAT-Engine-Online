@@ -30,14 +30,35 @@ body {
 }
 
 #appSidebar {
-    width: 250px;    
-    flex-shrink: 0; 
+    width: 250px;
+    flex-shrink: 0;
     height: 100vh;
     background-color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
     border-right: 1px solid #ccc;
+    transition: width 0.25s ease;
+    overflow: hidden;
+}
+
+#appSidebar.collapsed {
+    width: 65px;
+}
+
+#sidebarToggle {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #212856;
+    cursor: pointer;
+    padding: 16px;
+    align-self: flex-start;
+    line-height: 1;
+}
+
+#sidebarToggle:hover {
+    color: #7B5CD0;
 }
 
 #mainContent {
@@ -351,13 +372,37 @@ header {
     border-radius: 15px;
     font-size: 16px;
     margin: 0;
-    padding: 20px;
+    padding: 14px 20px;
     display: flex;
     align-items: center;
     justify-content: flex-start;
+    gap: 12px;
     width: 100%;
-    box-sizing: border-box; 
-    margin-bottom: 10px;    
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.menuButton i {
+    flex-shrink: 0;
+    width: 18px;
+    text-align: center;
+}
+
+.menuLabel {
+    transition: opacity 0.2s ease;
+}
+
+#appSidebar.collapsed .menuLabel {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+#appSidebar.collapsed .menuButton {
+    justify-content: center;
+    padding: 14px;
 }
 
 .menuButton:hover { 
@@ -371,6 +416,11 @@ header {
 }
 
 /* Dashboard */
+.dashboardBrand {
+    margin: 25px 25px 0 25px;
+    color: #212856;
+}
+
 .dashboardContainer {
     background-color: #EFEFEF;
     width: 100%;
