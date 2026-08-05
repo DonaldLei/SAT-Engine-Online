@@ -146,6 +146,17 @@ body {
     gap:20px;
 }
 
+.allQuestionsAnsweredContainer {
+    background-color: white;
+    border-radius: 12px;
+}
+
+.allQuestionsAnsweredContainer ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
 #diagnosticSection {
     min-height: 100vh;
     background-color: #EFEFEF;
