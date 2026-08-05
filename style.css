@@ -157,7 +157,7 @@ body {
     margin-top: 14px;
 }
 
-#saveProfileButton {
+#saveProfileButton, #changeUserProfileButton {
     padding: 10px 24px;
     background-color: #3BBAAB;
     color: white;
@@ -195,13 +195,31 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-
-
-    
+    border-radius: 12px;
+    gap: 12px;
 }
-/* .userProfileContainer {
 
-} */
+#resetEnglishUserResponseData, #resetMathUserResponseData {
+    border: 2px solid red;
+    border-radius: 20px;
+    background-color: white;
+    cursor: pointer;
+    font-family: 'Lexend', sans-serif;
+    padding: 10px 24px;
+    box-sizing: border-box;
+    min-width: 200px;      
+    text-align: center;
+}
+
+
+
+.userProfileContainer {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    text-align: center; 
+}
 
 #statisticsSection {
     flex-grow: 1;
@@ -247,12 +265,21 @@ body {
     display: grid;
 }
 
+.filterButton {
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.filterButton.active {
+    background-color: #868e96;
+}
+
 .headerCard {
     background-color: #f1f3f5;
 }
 
 .answeredQuestionCard {
-    display: grid;
+    display: none;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     align-items: start;
     justify-items: start;
@@ -262,6 +289,10 @@ body {
     padding: 10px 20px;
     border: 1px solid black;
     gap: 15px;
+}
+
+.answeredQuestionCard.show {
+    display: grid;
 }
 
 .answeredQuestionCard p {

@@ -158,7 +158,7 @@
 
                 <!-- View mode -->
                 <div id="profileView">
-                    <h3>Your current information.</h3>
+                    <h3>Your current information</h3>
                     <div class="userProfileInformation">
                         <p id="firstNameText">First Name:</p>
                         <p id="lastNameText">Last Name:</p>
@@ -172,7 +172,7 @@
 
                 <!-- Edit mode -->
                 <div id="profileEdit" class="hidden">
-                    <h3>Update your information.</h3>
+                    <h3>Update your information</h3>
                     <form id="editProfileForm" class="editProfileForm">
                         <label for="editFirstName">First Name:</label>
                         <input type="text" id="editFirstName" required>
@@ -207,8 +207,17 @@
 
                 <p id="resetDisclaimer">If you have completed all questions in a subject, feel free to reset your progress and practice again.</p>
                 <div class="resetUserResponseDataContainer">
-                    <button id="resetEnglishUserResponseData">Reset English</button>
-                    <button id="resetMathUserResponseData">Reset Mathematics</button>
+                    <button id="resetEnglishUserResponseData">Reset English Data</button>
+                    <button id="resetMathUserResponseData">Reset Mathematics Data</button>
+                </div>
+
+                <div id ="resetCautionMessage" class ="hidden">
+                    <h2>IMPORTANT: ALL PROGRESS WILL BE DELETED!</h2>
+                    <p>Confirm?</p>
+                    <div class ="resetConfirmationButtons">
+                        <button id="resetConfirmationYes">Yes</button>
+                        <button id="resetConfirmationNo">No</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -241,11 +250,12 @@
                     <button id="viewStatisticsCharts">View Charts</button>
                         <div id ="questionsHistoryContainer">
                             <div class="allQuestionsAnsweredFilters">
-                                <p>Apply Filters</p>
-                                <button class="filterButton active" onclick="filterSection('all')">All Questions</button>
-                                <button class="filterButton" onclick="filterSection('Incorrect')">Incorrect</button>
-                                <button class="filterButton" onclick="filterSection('English')">English</button>
-                                <button class="filterButton" onclick="filterSection('Mathematics')">Mathematics</button>
+                                <h2>Apply Filters</h2>
+                                <button class="filterButton active" onclick="filterSubject('All', event)">All Questions</button>
+                                <button class="filterButton" onclick="filterSubject('English', event)">English</button>
+                                <button class="filterButton" onclick="filterSubject('Mathematics', event)">Mathematics</button>
+                                <button class="filterButton" onclick="filterSubject('Correct', event)">Correct</button>
+                                <button class="filterButton" onclick="filterSubject('Incorrect', event)">Incorrect</button>
                             </div>
 
                             <div id = "allQuestionsAnsweredContainer">

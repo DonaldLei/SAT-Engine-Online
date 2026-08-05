@@ -504,10 +504,11 @@ async function renderDashboard(){
 
             alert("Registration status has been updated!");
             
-            //Clear reminders
+            //Clear reminder
             importantReminders.innerHTML = ``;
         });
     }
+
     const userStatistics = await fetchDashboardInformation();
     const quickInformationEnglish = document.getElementById('skillsListReading');
     const quickInformationMathematics = document.getElementById('skillsListMathematics');
@@ -565,12 +566,12 @@ async function renderProfile(){
     }
 
     // Populate view mode
-    document.getElementById('firstNameText').textContent = `First Name: ${data.first_name || ''}`;
-    document.getElementById('lastNameText').textContent = `Last Name: ${data.last_name || ''}`;
-    document.getElementById('gradeText').textContent = `Current Grade: ${data.currentGrade || ''}`;
-    document.getElementById('targetDateText').textContent = `Target College Application Deadline: ${data.targetApplicationDeadline || ''}`;
-    document.getElementById('testAttemptsText').textContent = `Test Attempts: ${data.satAttempts ?? ''}`;
-    document.getElementById('currentScoreText').textContent = `Current Score: ${data.currentScore ?? ''}`;
+    document.getElementById('firstNameText').innerHTML = `<b>First Name: </b> ${data.first_name || ''}`;
+    document.getElementById('lastNameText').innerHTML  = `<b>Last Name: </b>${data.last_name || ''}`;
+    document.getElementById('gradeText').innerHTML  = `<b>Current Grade: </b> ${data.currentGrade || ''}`;
+    document.getElementById('targetDateText').innerHTML = `<b>Target College Application Deadline: </b>${data.targetApplicationDeadline || ''}`;
+    document.getElementById('testAttemptsText').innerHTML  = `<b>Test Attempts: </b>${data.satAttempts ?? ''}`;
+    document.getElementById('currentScoreText').innerHTML  = `<b>Current Score: </b>${data.currentScore ?? ''}`;
 
     // "Change Information" — switch to edit mode pre-filled with current data
     document.getElementById('changeUserProfileButton').onclick = () => {
@@ -590,6 +591,22 @@ async function renderProfile(){
         document.getElementById('profileEdit').classList.add('hidden');
         document.getElementById('profileView').classList.remove('hidden');
     };
+
+    document.getElementById('resetEnglishUserResponseData').onclick = () => {
+        document.getElementById('profileView').classList.add('hidden');
+        document.getElementById('resetCautionMessage').classList.remove('hidden');
+    }
+
+    document.getElementById('resetMathUserResponseData').onclick = () => {
+        document.getElementById('profileView').classList.add('hidden');
+        document.getElementById('resetCautionMessage').classList.remove('hidden');
+    }
+        
+    document.getElementById('resetConfirmationNo').onclick = (e) =>  {
+        e.preventDefault();
+        document.getElementById('resetCautionMessage').classList.add('hidden');
+        document.getElementById('profileView').classList.remove('hidden');
+    }
 
     // "Save" — upsert to Supabase then refresh view
     document.getElementById('editProfileForm').onsubmit = async (e) => {
@@ -714,7 +731,7 @@ async function renderAnsweredQuestions(){
     const allQuestionsAnsweredContainer = document.getElementById('allQuestionsAnsweredContainer');
     
     let tempText = `
-        <div class="answeredQuestionCard headerCard">
+        <div class="answeredQuestionCard headerCard show">
             <p><b>Question ID</b></p>
             <p><b>Subject</b></p>
             <p><b>Domain</b></p>
@@ -735,7 +752,7 @@ async function renderAnsweredQuestions(){
         }
 
         tempText += `
-            <div class="answeredQuestionCard filterDiv ${item.subject} ${item.isCorrect ? 'Correct' : 'Incorrect'}">
+            <div class="answeredQuestionCard show ${item.subject} ${answer}">
                     <p>${item.questionID}</p>
                     <p>${item.subject}</p>
                     <p>${item.questionDomain}</p>
@@ -748,6 +765,32 @@ async function renderAnsweredQuestions(){
     }
     allQuestionsAnsweredContainer.innerHTML = tempText;
 }
+
+function filterSubject(c, event){
+    const questionCards = document.getElementsByClassName("answeredQuestionCard");
+    
+    for(let i = 0; i < questionCards.length; i++){
+        if(questionCards[i].classList.contains('headerCard')){
+            continue;
+        }
+
+        questionCards[i].classList.remove("show");
+
+        if(c == "All" || questionCards[i].classList.contains(c)){
+            questionCards[i].classList.add("show");
+        }
+    }
+
+    const filters = document.getElementsByClassName("filterButton");
+
+    for(let i = 0; i < filters.length; i++){
+        filters[i].classList.remove("active");
+    }
+    
+    event.currentTarget.classList.add("active");
+}
+
+window.filterSubject = filterSubject;
 
 document.querySelectorAll('.menuButton').forEach(button => {
     button.addEventListener('click', async () => {
