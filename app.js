@@ -546,7 +546,11 @@ async function renderDashboard(){
 
 async function renderProfile(){
     changeSection(profileSection);
-    
+
+    // Always start in view mode
+    document.getElementById('profileView').classList.remove('hidden');
+    document.getElementById('profileEdit').classList.add('hidden');
+
     const { data: { user } } = await client.auth.getUser();
 
     const { data, error } = await client
@@ -554,27 +558,83 @@ async function renderProfile(){
         .select('*')
         .eq('id', user.id)
         .single();
-    
+
     if(error){
         console.error("Issue with fetching user profile: ", error);
         return;
     }
 
-    const firstNameText = document.getElementById('firstNameText');
-    const lastNameText = document.getElementById('lastNameText');
-    const gradeText = document.getElementById('gradeText');
-    const targetDateText = document.getElementById('targetDateText');
-    const testAttemptsText = document.getElementById('testAttemptsText');
-    const currentScoreText = document.getElementById('currentScoreText');
+    // Populate view mode
+    document.getElementById('firstNameText').textContent = `First Name: ${data.first_name || ''}`;
+    document.getElementById('lastNameText').textContent = `Last Name: ${data.last_name || ''}`;
+    document.getElementById('gradeText').textContent = `Current Grade: ${data.currentGrade || ''}`;
+    document.getElementById('targetDateText').textContent = `Target College Application Deadline: ${data.targetApplicationDeadline || ''}`;
+    document.getElementById('testAttemptsText').textContent = `Test Attempts: ${data.satAttempts ?? ''}`;
+    document.getElementById('currentScoreText').textContent = `Current Score: ${data.currentScore ?? ''}`;
 
-    firstNameText.innerHTML = `First Name: ${data.first_name}`;
-    lastNameText.innerHTML = `Last Name: ${data.last_name}`;
-    gradeText.innerHTML = `Current Grade: ${data.currentGrade}`;
-    targetDateText.innerHTML = `Target College Application Deadline: ${data.targetApplicationDeadline}`;
-    testAttemptsText.innerHTML = `Test Attempts: ${data.satAttempts}`;
-    currentScoreText.innerHTML = `Current Score: ${data.currentScore}`;
+    // "Change Information" — switch to edit mode pre-filled with current data
+    document.getElementById('changeUserProfileButton').onclick = () => {
+        document.getElementById('editFirstName').value = data.first_name || '';
+        document.getElementById('editLastName').value = data.last_name || '';
+        document.getElementById('editGrade').value = data.currentGrade || '9';
+        document.getElementById('editDeadline').value = data.targetApplicationDeadline || '';
+        document.getElementById('editAttempts').value = data.satAttempts ?? '';
+        document.getElementById('editScore').value = data.currentScore ?? '';
+        document.getElementById('editProfileError').classList.add('hidden');
+        document.getElementById('profileView').classList.add('hidden');
+        document.getElementById('profileEdit').classList.remove('hidden');
+    };
 
-    //Make it a form where any changes that they make will be updated. 
+    // "Cancel" — go back to view mode
+    document.getElementById('cancelEditButton').onclick = () => {
+        document.getElementById('profileEdit').classList.add('hidden');
+        document.getElementById('profileView').classList.remove('hidden');
+    };
+
+    // "Save" — upsert to Supabase then refresh view
+    document.getElementById('editProfileForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const errorEl = document.getElementById('editProfileError');
+        errorEl.classList.add('hidden');
+
+        const firstName = document.getElementById('editFirstName').value.trim();
+        const lastName = document.getElementById('editLastName').value.trim();
+
+        if(!firstName || !lastName){
+            errorEl.textContent = 'First and last name are required.';
+            errorEl.classList.remove('hidden');
+            return;
+        }
+
+        const saveBtn = document.getElementById('saveProfileButton');
+        saveBtn.textContent = 'Saving...';
+        saveBtn.disabled = true;
+
+        const { error: updateError } = await client
+            .from('userProfiles')
+            .update({
+                first_name: firstName,
+                last_name: lastName,
+                currentGrade: document.getElementById('editGrade').value,
+                targetApplicationDeadline: document.getElementById('editDeadline').value || null,
+                satAttempts: document.getElementById('editAttempts').value || null,
+                currentScore: document.getElementById('editScore').value || null,
+            })
+            .eq('id', user.id);
+
+        saveBtn.textContent = 'Save';
+        saveBtn.disabled = false;
+
+        if(updateError){
+            errorEl.textContent = 'Could not save changes. Please try again.';
+            errorEl.classList.remove('hidden');
+            console.error('Profile update error:', updateError);
+            return;
+        }
+
+        // Refresh profile view with updated data
+        await renderProfile();
+    };
 }
 
 function createChart(canvasId, domainData) {
