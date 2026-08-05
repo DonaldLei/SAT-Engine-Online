@@ -653,15 +653,36 @@ async function renderAnsweredQuestions(){
 
     const allQuestionsAnsweredContainer = document.getElementById('allQuestionsAnsweredContainer');
     
-    let tempText = '';
+    let tempText = `
+        <div class="answeredQuestionCard headerCard">
+            <p><b>Question ID</b></p>
+            <p><b>Subject</b></p>
+            <p><b>Domain</b></p>
+            <p><b>Skill</b></p>
+            <p><b>Difficulty</b></p>
+            <p><b>Time</b></p>
+            <p><b>Answer</b></p>
+        </div>
+    `;
 
     for(let i = 0; i < data.length; i++){
         const item = data[i];
+        
+        let answer = item.isCorrect ? 'Correct' : 'Incorrect';
+
+        if(!item.isCorrect && item.errorType){
+            answer += ` (${item.errorType})`;
+        }
+
         tempText += `
-            <div class="allQuestionsAnsweredContainer">
-                <ul>
-                    <li><p>Question ID: ${item.questionID} | Subject: ${item.subject} | Question Domain: ${item.questionDomain} | Question Skill: ${item.questionSkill} | Difficulty: ${item.difficulty} | Time Elapsed: ${item.timeElapsed} | Answered Correctly: ${item.isCorrect}</p></li>
-                </ul>
+            <div class="answeredQuestionCard filterDiv ${item.subject} ${item.isCorrect ? 'Correct' : 'Incorrect'}">
+                    <p>${item.questionID}</p>
+                    <p>${item.subject}</p>
+                    <p>${item.questionDomain}</p>
+                    <p>${item.questionSkill}</p>
+                    <p>${item.difficulty}</p>
+                    <p>${item.timeElapsed}</p>
+                    <p>${answer}</p>
             </div>
         `
     }

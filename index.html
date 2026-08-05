@@ -177,7 +177,7 @@
             <div class="statisticsContainer">
                 <div id="statisticsCharts">
                     <h1>Your Statistics</h1>
-                    <button id="viewQuestionHistory">View Question History</button>
+                    <button id="viewQuestionHistory">View Answered Questions</button>
                     
                     <h2>Reading & Writing Charts</h2>
                     <div id="chartReadingContainer">
@@ -197,11 +197,21 @@
                 </div>
 
                 <div id="statisticsQuestions" class="hidden">
-                    <h1>Question History</h1>
+                    <h1>Answered Questions</h1>
                     <button id="viewStatisticsCharts">View Charts</button>
-                    <div id="allQuestionsAnsweredContainer">
-                        
-                    </div>
+                        <div id ="questionsHistoryContainer">
+                            <div class="allQuestionsAnsweredFilters">
+                                <p>Apply Filters</p>
+                                <button class="filterButton active" onclick="filterSection('all')">All Questions</button>
+                                <button class="filterButton" onclick="filterSection('Incorrect')">Incorrect</button>
+                                <button class="filterButton" onclick="filterSection('English')">English</button>
+                                <button class="filterButton" onclick="filterSection('Mathematics')">Mathematics</button>
+                            </div>
+
+                            <div id = "allQuestionsAnsweredContainer">
+                                
+                            </div>
+                        </div>
                 </div>
             </div>
         </div>

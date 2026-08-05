@@ -145,8 +145,13 @@ body {
     display: flex;
     background-color: #EFEFEF;
 }
+#questionsHistoryContainer {
+    margin: 25px;
+    display: flex;
+    flex-direction: column;
+}
 
-#viewQuestionHistory {
+#viewQuestionHistory, #viewStatisticsCharts {
     width: 200px;
     padding: 15px 6px;
     font-size: 18px;
@@ -164,17 +169,37 @@ body {
     position: relative;
     height: 300px; 
     width: 500px;
-    gap:20px;
+    gap: 20px;
 }
 
-.allQuestionsAnsweredContainer {
+#allQuestionsAnsweredContainer {
     background-color: white;
-    border-radius: 12px;
+    border: 1px solid white;
+    border-radius: 20px;
+    margin: 25px;
+    padding: 15px;
+    color: #212856;
+    display: grid;
 }
 
-.allQuestionsAnsweredContainer ul {
-    list-style: none;
-    padding: 0;
+.headerCard {
+    background-color: #f1f3f5;
+}
+
+.answeredQuestionCard {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    align-items: start;
+    justify-items: start;
+    justify-content: space-between;
+    border-radius: 20px;
+    margin: 5px;
+    padding: 10px 20px;
+    border: 1px solid black;
+    gap: 15px;
+}
+
+.answeredQuestionCard p {
     margin: 0;
 }
 
