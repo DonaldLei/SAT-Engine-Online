@@ -126,6 +126,71 @@ body {
     background-color: #EFEFEF;
 }
 
+.editProfileForm {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 400px;
+    margin: 10px 0;
+}
+
+.editProfileForm label {
+    font-weight: 600;
+    color: #212856;
+    margin-top: 8px;
+}
+
+.editProfileForm input,
+.editProfileForm select {
+    padding: 10px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-family: 'Lexend', sans-serif;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.editProfileButtons {
+    display: flex;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+#saveProfileButton {
+    padding: 10px 24px;
+    background-color: #3BBAAB;
+    color: white;
+    border: none;
+    border-radius: 9999px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: 'Lexend', sans-serif;
+}
+
+#saveProfileButton:hover { background-color: #2F9589; }
+
+#cancelEditButton {
+    padding: 10px 24px;
+    background-color: #ccc;
+    color: #212856;
+    border: none;
+    border-radius: 9999px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    font-family: 'Lexend', sans-serif;
+}
+
+#cancelEditButton:hover { background-color: #bbb; }
+
+.editProfileError {
+    color: red;
+    font-size: 14px;
+    margin-top: 6px;
+}
+
 .resetUserResponseDataContainer {
     display: flex;
     justify-content: center;
