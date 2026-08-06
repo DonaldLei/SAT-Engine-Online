@@ -250,10 +250,9 @@ body {
 #chartReadingContainer, #chartMathContainer {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    position: relative;
-    height: 300px; 
-    width: 500px;
     gap: 20px;
+    width: 500px;
+    margin-bottom: 40px;
 }
 
 #allQuestionsAnsweredContainer {
