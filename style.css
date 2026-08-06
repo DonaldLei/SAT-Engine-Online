@@ -228,6 +228,7 @@ body {
     display: flex;
     background-color: #EFEFEF;
 }
+
 #questionsHistoryContainer {
     margin: 25px;
     display: flex;
