@@ -98,11 +98,12 @@
                 <h1 class="dashboardBrand">ClearPillar</h1>
                 <div class="welcomeUserContainer">
                     <p><span id="current-date"></span></p>
-                    <h2 id="welcomeMessage"></h2>
-                    <h3>Continue your work!</h3>
+                    <h2 id="welcomeUserMessage"></h2>
+                    <p id ="welcomeMessage">Continue your work!</h3>
                 </div>
                 
-                <div class ="remindersContainer">
+                <div class ="remindersContainer hidden">
+                    <h2 id = "remindersHeader">Important Reminders:</h2>
                     <div id ="importantReminders"></div>
                 </div>
 
@@ -212,7 +213,7 @@
                 </div>
 
                 <div id ="resetCautionMessage" class ="hidden">
-                    <h2>IMPORTANT: ALL PROGRESS WILL BE DELETED!</h2>
+                    <h2 id="resetSubjectDisclaimer"></h2>
                     <p>Confirm?</p>
                     <div class ="resetConfirmationButtons">
                         <button id="resetConfirmationYes">Yes</button>

@@ -9,6 +9,8 @@ let hasLeftTheScreen = false;
 let startTime = null;
 let liveCounter = null;
 let diagnosticSubject = '';
+let blockPractice = false;
+let questionSubjectDataToDelete = '';
 const chartInstances = {};
 
 //Supabase authentication and sign up
@@ -246,9 +248,8 @@ async function fetchName(){
         return;
     }
 
-    const welcomeMessage = document.getElementById('welcomeMessage');
-    const welcomeMessageOptions = `Welcome, ${data.first_name}!`;
-    welcomeMessage.textContent = welcomeMessageOptions;
+    const welcomeUserMessage = document.getElementById('welcomeUserMessage');
+    welcomeUserMessage.textContent = `Welcome, ${data.first_name}!`;
 }
 
 //Section DOM
@@ -385,7 +386,17 @@ scheduleTestDate.addEventListener('submit', async (event) => {
 
     registrationDeadlineDate.setDate(testDateScheduled.getDate() - 4);
 
-    console.log(registrationDeadlineDate);
+    const dateToday = new Date();
+    dateToday.setHours(0, 0, 0, 0);
+
+    let dayName = dateToday.toLocaleDateString('en-US', {weekday: 'long'});
+    let monthName = dateToday.toLocaleDateString('en-US', {month: 'long'});
+    let dayOfMonth = dateToday.getDate();
+    
+    if(registrationDeadlineDate < dateToday){
+        alert("You cannot schedule for this test date because the registration deadline has passed! Please select another date.");
+        return;
+    }
 
     const { data: { user } } = await client.auth.getUser();
 
@@ -425,21 +436,51 @@ scheduleTestDate.addEventListener('submit', async (event) => {
     await fetchScheduleTestDate();
 });
 
-// function scheduleCheck(){
+async function testScheduleCheck(){
    
-//     const { data: { user } } = await client.auth.getUser();    
+    const { data: { user } } = await client.auth.getUser();    
 
-//     const { data, error } = await client
-//         .from('studentRequests')
-//         .select('*')
-//         .eq('studentID', user.id)
-//         .single();
+    const { data, error } = await client
+        .from('studentRequests')
+        .select('*')
+        .eq('studentID', user.id)
+        .single();
     
-//     //If there is a test date scheduled
-//     if(data && ){
+    //If there is a test date scheduled
+    if(error){
+        console.error("No test scheduled yet:", error);
+        return;
+    }
 
-//     }
-// }
+    const msPerDay = 1000 * 60 * 60 * 24; 
+
+    const dateToday = new Date();
+    dateToday.setHours(0, 0, 0, 0);
+
+    let dayName = dateToday.toLocaleDateString('en-US', {weekday: 'long'});
+    let monthName = dateToday.toLocaleDateString('en-US', {month: 'long'});
+    let dayOfMonth = dateToday.getDate();
+
+    const testDateScheduled = new Date(data.scheduleDate);
+
+    const remainingDaysUntilTest = Math.round((testDateScheduled - dateToday) / msPerDay);
+
+    const daysAfterTest = Math.round((dateToday - testDateScheduled) / msPerDay);
+
+    const welcomeMessage = document.getElementById('welcomeMessage');
+
+    // Logic for practice blocking leading up to the exam (stop students from practicing 5 days leading up to the test)
+    if(remainingDaysUntilTest >= 0 && remainingDaysUntilTest <= 5){
+        welcomeMessage.textContent = "No more practice leading to your test!";
+        blockPractice = true;
+    } else if(daysAfterTest >= 0 && daysAfterTest <= 5){
+        welcomeMessage.textContent = "Take a break, you deserved it!";
+        blockPractice = true;
+    } else {
+        welcomeMessage.textContent = "Continue your work!";
+        blockPractice = false;
+    }
+}
 
 async function fetchScheduleTestDate(){
     const { data: { user } } = await client.auth.getUser();
@@ -466,8 +507,7 @@ async function fetchScheduleTestDate(){
 async function renderDashboard(){
     changeSection(dashboardSection);
     await fetchName();
-
-    const importantReminders = document.getElementById('importantReminders');
+    await testScheduleCheck();
 
     const { data: { user } } = await client.auth.getUser();
 
@@ -482,10 +522,30 @@ async function renderDashboard(){
         return;
     }
 
-    if(data && data.registrationStatus === 'Not registered'){
+    const msPerDay = 1000 * 60 * 60 * 24; 
+
+    const dateToday = new Date();
+    dateToday.setHours(0, 0, 0, 0);
+
+    let dayName = dateToday.toLocaleDateString('en-US', {weekday: 'long'});
+    let monthName = dateToday.toLocaleDateString('en-US', {month: 'long'});
+    let dayOfMonth = dateToday.getDate();
+    
+    const scheduledDate = new Date(data.scheduleDate);
+
+    const registrationDeadline = new Date(scheduledDate);
+
+    registrationDeadline.setDate(scheduledDate.getDate() - 4);
+
+    const remainingDaysRegistrationDeadline = Math.round((registrationDeadline - dateToday) / msPerDay);
+
+    if(data && remainingDaysRegistrationDeadline > 0){
+        const importantReminders = document.getElementById('importantReminders');
+        const remindersContainer = document.querySelector('.remindersContainer');
+        remindersContainer.classList.remove('hidden');
+
         importantReminders.innerHTML = `
-        <h2 id = "remindersHeader">Important Reminders:</h2>
-        <p>Have you completed your registration for your test scheduled for ${data.scheduleDate}?</p>
+        <p>Have you completed your registration for your test scheduled for ${data.scheduleDate}? You have <b>${remainingDaysRegistrationDeadline}</b> days left to register.</p>
         <button id='confirmRegistrationButton'>Confirm Registration</button>
         `
         
@@ -506,6 +566,8 @@ async function renderDashboard(){
             
             //Clear reminder
             importantReminders.innerHTML = ``;
+            remindersContainer.classList.add('hidden');
+            remindersContainer.style.display = 'none';
         });
     }
 
@@ -595,11 +657,17 @@ async function renderProfile(){
     document.getElementById('resetEnglishUserResponseData').onclick = () => {
         document.getElementById('profileView').classList.add('hidden');
         document.getElementById('resetCautionMessage').classList.remove('hidden');
+        questionSubjectDataToDelete = 'English';
+        const resetSubjectDisclaimer = document.getElementById('resetSubjectDisclaimer');
+        resetSubjectDisclaimer.innerHTML = `IMPORTANT: ALL ENGLISH PROGRESS WILL BE DELETED!`;
     }
 
     document.getElementById('resetMathUserResponseData').onclick = () => {
         document.getElementById('profileView').classList.add('hidden');
         document.getElementById('resetCautionMessage').classList.remove('hidden');
+        questionSubjectDataToDelete = 'Mathematics';
+        const resetSubjectDisclaimer = document.getElementById('resetSubjectDisclaimer');
+        resetSubjectDisclaimer.innerHTML = `IMPORTANT: ALL MATHEMATICS PROGRESS WILL BE DELETED!`;
     }
         
     document.getElementById('resetConfirmationNo').onclick = (e) =>  {
@@ -607,6 +675,41 @@ async function renderProfile(){
         document.getElementById('resetCautionMessage').classList.add('hidden');
         document.getElementById('profileView').classList.remove('hidden');
     }
+
+    document.getElementById('resetConfirmationYes').onclick = async(e) =>  {
+        e.preventDefault();
+
+        const { data, error } = await client
+            .from('userResponses')
+            .delete()
+            .select('*')
+            .eq('id', user.id)
+            .eq('subject', questionSubjectDataToDelete);
+
+        if(error){
+            console.error("User data could not be deleted:", error);
+            return;
+        } else {
+            alert("Your data has been deleted.");
+        }
+
+        if(questionSubjectDataToDelete == "English"){
+            const { data, error } = await client
+                .from('userProfiles')
+                .update({ ReadingDiagnosticCompleted: false} )
+                .eq('id', user.id);
+        } else {
+            const { data, error } = await client
+                .from('userProfiles')
+                .update({ MathDiagnosticCompleted: false} )
+                .eq('id', user.id);
+        }
+
+        document.getElementById('resetCautionMessage').classList.add('hidden');
+        document.getElementById('profileView').classList.remove('hidden');
+    }
+
+    
 
     // "Save" — upsert to Supabase then refresh view
     document.getElementById('editProfileForm').onsubmit = async (e) => {
@@ -868,6 +971,10 @@ function startQuiz(questions){
 }
 
 startPracticeReadingButton.addEventListener('click', async () => {
+    if(blockPractice == true){
+        alert("No practice allowed leading up to your exam date. Take a break!");
+        return;
+    }
     currentQuestionIndex = 0;
     questionCorrect = 0;
     questionIncorrect = 0;
@@ -910,6 +1017,11 @@ startPracticeReadingButton.addEventListener('click', async () => {
 });
 
 startPracticeMathButton.addEventListener('click', async () => {
+    if(blockPractice == true){
+        alert("No practice allowed leading up to your exam date. Take a break!");
+        return;
+    }
+
     currentQuestionIndex = 0;
     questionCorrect = 0;
     questionIncorrect = 0;

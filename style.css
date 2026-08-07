@@ -229,6 +229,23 @@ body {
     background-color: #EFEFEF;
 }
 
+.statisticsHeader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+#statisticsQuestions {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    text-align: center; 
+}
+
 #questionsHistoryContainer {
     margin: 25px;
     display: flex;
@@ -276,14 +293,26 @@ body {
 
 .headerCard {
     background-color: #f1f3f5;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    align-items: start;
+    justify-items: start;
+    justify-content: space-evenly;
+    border-radius: 20px;
+    margin: 5px;
+    padding: 10px 20px;
+    border: 1px solid black;
+    gap: 15px;
+    font-weight: bold;
 }
 
 .answeredQuestionCard {
     display: none;
+    text-align: left;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-    align-items: start;
+    align-items: center;
     justify-items: start;
-    justify-content: space-between;
+    justify-content: space-evenly;
     border-radius: 20px;
     margin: 5px;
     padding: 10px 20px;
@@ -561,6 +590,7 @@ header {
 
 .remindersContainer {
     display: flex;
+    flex-direction: column;
     background-color: white;
     border: 1px solid #EFEFEF;
     border-radius: 20px;
