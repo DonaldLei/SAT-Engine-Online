@@ -107,6 +107,11 @@
                     <div id ="importantReminders"></div>
                 </div>
 
+                <div class ="tasksContainer">
+                    <h2 id ="tasksHeader">Tasks for Today:</h2>
+                    <div id ="tasksRemaining"></div>
+                </div>
+                
                 <div class="startPractice">
                         <div class="startPracticeContainer">
                             <h2 id="tasksInfo">Start Practice</h1>
@@ -319,7 +324,7 @@
                     answering the question, you will then reference the "With correct answers and explanations" PDF
                     to verify your answer and read the explanation by using the same "CRTL" and "F" search method. After that,
                     you will come back here and answer whether or not you answered correctly. </p>
-        
+                <p>Disclaimer: Questions are sourced from CollegeBoard Educator's Question Bank. We are not affiliated with CollegeBoard.</p>
                 <button id="startDiagnostic">Start Diagnostic</button>
             </div>
         </div>
@@ -335,8 +340,10 @@
                     <p>If you wish to reschedule, submit another test date to override your previous request.</p>
                     <form id="scheduleTestDate">
                         <div id="dateSelector">
-                            <label for="testDate">Next test date:</label>
+                            <label for="testDate">Test date:</label>
                             <input type="date" id="testDate" name="testDate"></input>
+                            <label for="testDate">Registration deadline:</label>
+                            <input type="date" id="testDate" name="deadlineDate"></input>
                         </div>
                         <input type="submit" value="Submit" class="dateSubmit">
                     </form>
@@ -359,6 +366,10 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Tutor interface -->
+        <div id = "tutorDashboard" class ="viewApp hidden"></div>
         </div>
     </div>
 </div>

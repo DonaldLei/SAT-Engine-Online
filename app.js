@@ -83,12 +83,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     if(session){
         const { data: profile } = await client
             .from('userProfiles')
-            .select('first_name, last_name')
+            .select('first_name, last_name, role')
             .eq('id', session.user.id)
             .single();
 
+        
         if(!profile || !profile.first_name || !profile.last_name){
             changeSection(userSetupSection);
+        } else if(profile.role === 'Tutor') {
+            // changeSection(tutorDashboardSection);
         } else {
             const savedSectionId = localStorage.getItem('lastViewedSection');
             const targetSection = savedSectionId ? document.getElementById(savedSectionId) : null;
@@ -373,18 +376,16 @@ userProfileForm.addEventListener('submit', async (event) => {
     }
 });
 
-//Insert new scheduling into the database for tutors, can only send one request at a time, will only display one request
+//Insert new scheduling into the database for tutors, can only send one request at a time
 scheduleTestDate.addEventListener('submit', async (event) => {
     event.preventDefault();
     
     const formData = new FormData(event.target);
-    const testDateString = formData.get('testDate');
+    const testDateText = formData.get('testDate');
+    const deadlineDateText = formData.get('deadlineDate');
 
-    const testDateScheduled = new Date(testDateString);
-
-    const registrationDeadlineDate = new Date(testDateScheduled);
-
-    registrationDeadlineDate.setDate(testDateScheduled.getDate() - 4);
+    const testDateToCompare = new Date(testDateText);
+    const deadlineDateToCompare = new Date(deadlineDateText);
 
     const dateToday = new Date();
     dateToday.setHours(0, 0, 0, 0);
@@ -392,9 +393,12 @@ scheduleTestDate.addEventListener('submit', async (event) => {
     let dayName = dateToday.toLocaleDateString('en-US', {weekday: 'long'});
     let monthName = dateToday.toLocaleDateString('en-US', {month: 'long'});
     let dayOfMonth = dateToday.getDate();
-    
-    if(registrationDeadlineDate < dateToday){
-        alert("You cannot schedule for this test date because the registration deadline has passed! Please select another date.");
+
+    if(testDateToCompare < dateToday || deadlineDateToCompare < dateToday){
+        alert("You cannot schedule for this test date because the deadlines have passed! Please select another date.");
+        return;
+    } else if(deadlineDateToCompare > testDateToCompare){
+        alert("Registration deadline should not be later than the scheduled test date. Please review the dates that you inputted.");
         return;
     }
 
@@ -415,10 +419,10 @@ scheduleTestDate.addEventListener('submit', async (event) => {
         .from('studentRequests')
         .upsert({
             studentID: user.id,
-            scheduleDate: testDateScheduled,
+            scheduleDate: testDateText,
             studentFirstName: studentName.first_name,
             studentLastName: studentName.last_name,
-            registrationDeadline: registrationDeadlineDate,
+            registrationDeadline: deadlineDateText,
             registrationStatus: 'Not registered'
         }, { onConflict: 'studentID' });
 
@@ -504,10 +508,69 @@ async function fetchScheduleTestDate(){
     registrationStatus.textContent = `Registration status: ${data.registrationStatus}`;
 }
 
+//Determine if student has completed the necessary work for today
+async function checkEnglishQuestionsCompletedToday(){
+    //Get the date today
+    const dateToday = new Date();
+    dateToday.setHours(0, 0, 0, 0);
+
+    let dayName = dateToday.toLocaleDateString('en-US', {weekday: 'long'});
+    let monthName = dateToday.toLocaleDateString('en-US', {month: 'long'});
+    let dayOfMonth = dateToday.getDate();
+
+    //Convert to allow it to be compared
+    const dateString = dateToday.toISOString().split('T')[0];
+
+    const { data: { user } } = await client.auth.getUser();
+    
+    const { count , error } = await client
+        .from('userResponses')
+        .select('questionID', { count: 'exact', head: true})
+        .eq('id', user.id)
+        .eq('subject', 'English')
+        .eq('dateAnswered', dateString)
+    
+    if(error){
+        console.error("Error fetching questions completed: ", error);
+    } else {
+        return count;
+    }
+}
+
+async function checkMathQuestionsCompletedToday(){
+    //Get the date today
+    const dateToday = new Date();
+    dateToday.setHours(0, 0, 0, 0);
+
+    let dayName = dateToday.toLocaleDateString('en-US', {weekday: 'long'});
+    let monthName = dateToday.toLocaleDateString('en-US', {month: 'long'});
+    let dayOfMonth = dateToday.getDate();
+
+    //Convert to allow it to be compared
+    const dateString = dateToday.toISOString().split('T')[0];
+
+    const { data: { user } } = await client.auth.getUser();
+    
+    const { count , error } = await client
+        .from('userResponses')
+        .select('questionID', { count: 'exact', head: true})
+        .eq('id', user.id)
+        .eq('subject', 'Mathematics')
+        .eq('dateAnswered', dateString)
+    
+    if(error){
+        console.error("Error fetching questions completed: ", error);
+    } else {
+        return count;
+    }
+}
+
 async function renderDashboard(){
     changeSection(dashboardSection);
     await fetchName();
     await testScheduleCheck();
+    await checkEnglishQuestionsCompletedToday();
+    await checkMathQuestionsCompletedToday();
 
     const { data: { user } } = await client.auth.getUser();
 
@@ -533,9 +596,7 @@ async function renderDashboard(){
     
     const scheduledDate = new Date(data.scheduleDate);
 
-    const registrationDeadline = new Date(scheduledDate);
-
-    registrationDeadline.setDate(scheduledDate.getDate() - 4);
+    const registrationDeadline = new Date(data.registrationDeadline);
 
     const remainingDaysRegistrationDeadline = Math.round((registrationDeadline - dateToday) / msPerDay);
 
@@ -545,7 +606,7 @@ async function renderDashboard(){
         remindersContainer.classList.remove('hidden');
 
         importantReminders.innerHTML = `
-        <p>Have you completed your registration for your test scheduled for ${data.scheduleDate}? You have <b>${remainingDaysRegistrationDeadline}</b> days left to register.</p>
+        <p>Have you completed your registration for your test scheduled for ${data.scheduleDate}? You have <b>${remainingDaysRegistrationDeadline}</b> day(s) left to register.</p>
         <button id='confirmRegistrationButton'>Confirm Registration</button>
         `
         
@@ -605,6 +666,27 @@ async function renderDashboard(){
             </div>`;
     }
     quickInformationMathematics.innerHTML = temporaryTextHolder2;
+
+    //Logic for task completion
+    const englishQuestionsCompleted = await checkEnglishQuestionsCompletedToday();
+    const mathQuestionsCompleted = await checkMathQuestionsCompletedToday();
+
+    const tasksRemaining = document.getElementById('tasksRemaining');
+
+    tasksRemaining.innerHTML = `
+        <div class ="remainingTasks">
+            <p id ="remainingTasksEnglish">You completed ${englishQuestionsCompleted} out of 15 Reading & Writing questions required today!</p>
+            <p id ="remainingTasksMath">You completed ${mathQuestionsCompleted} out of 15 Mathematics questions required today!</p>
+        </div>
+    `;
+
+    if(englishQuestionsCompleted >= 15 && mathQuestionsCompleted >= 15){
+        tasksRemaining.innerHTML = `
+            <div class ="remainingTasks">
+                <p id ="remainingTasksText">You have completed all tasks for today! Feel free to practice more if you wish.</p>
+            </div>
+        `;
+    }
 }
 
 async function renderProfile(){
@@ -1239,7 +1321,8 @@ async function pullQuestion(questionAmount){
                     difficulty: q.questionDifficulty,
                     timeElapsed: totalSeconds,
                     isCorrect: isCorrectBoolean,
-                    subject: q.subject
+                    subject: q.subject,
+                    isDiagnostic: q.isDiagnostic
                 }]);
 
             if(error){
@@ -1416,3 +1499,5 @@ async function adaptiveAlgorithm(databaseName){
 
     return sessionQuestions;
 }
+
+//Tutor interface logic
