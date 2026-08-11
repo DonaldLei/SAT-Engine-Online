@@ -457,9 +457,11 @@ async function testScheduleCheck(){
     } 
     
     if(!data){
-        welcomeMessage.textContent = "Continue your work!";
-        blockPractice = false;
-        return;
+        if(welcomeMessage){
+            welcomeMessage.textContent = "Continue your work!";
+            blockPractice = false;
+            return;
+        }
     }
 
     const msPerDay = 1000 * 60 * 60 * 24;
