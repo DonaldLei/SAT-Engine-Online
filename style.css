@@ -42,6 +42,13 @@ body {
     overflow: hidden;
 }
 
+.userRoleSidebar {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    width: 100%;
+}
+
 #appSidebar.collapsed {
     width: 65px;
 }
@@ -515,8 +522,8 @@ header {
     gap: 1px;
 }
 
-.mainTabs .menuButton:nth-child(5) { 
-    margin-top: auto; 
+.menuButton.push-bottom {
+    margin-top: auto;
 }
 
 .menuButton {
@@ -538,6 +545,7 @@ header {
     white-space: nowrap;
     overflow: hidden;
 }
+
 
 .menuButton i {
     flex-shrink: 0;

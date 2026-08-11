@@ -290,14 +290,14 @@ function changeSection(nextSection){
     
     nextSection.classList.remove('hidden');
 
-    const sidebar = document.getElementById('appSidebar');
+    const studentSidebar = document.getElementById('studentSidebar');
     
     const hideSidebarOn = ['welcomeSection', 'authenticationSection', 'userSetupSection'];
 
     if(hideSidebarOn.includes(nextSection.id)){
-        sidebar.classList.add('hidden'); 
+        studentSidebar.classList.add('hidden'); 
     } else {
-        sidebar.classList.remove('hidden');
+        studentSidebar.classList.remove('hidden');
     }
 
     document.querySelectorAll('.menuButton').forEach(button => {
@@ -442,7 +442,7 @@ scheduleTestDate.addEventListener('submit', async (event) => {
 
 async function testScheduleCheck(){
     const welcomeMessage = document.getElementById('welcomeMessage');
-    
+
     const { data: { user } } = await client.auth.getUser();    
 
     const { data, error } = await client
@@ -593,51 +593,53 @@ async function renderDashboard(){
         return;
     }
 
-    const msPerDay = 1000 * 60 * 60 * 24; 
+    if(data){
+        const msPerDay = 1000 * 60 * 60 * 24; 
 
-    const dateToday = new Date();
-    dateToday.setHours(0, 0, 0, 0);
+        const dateToday = new Date();
+        dateToday.setHours(0, 0, 0, 0);
 
-    let dayName = dateToday.toLocaleDateString('en-US', {weekday: 'long'});
-    let monthName = dateToday.toLocaleDateString('en-US', {month: 'long'});
-    let dayOfMonth = dateToday.getDate();
-    
-    const scheduledDate = new Date(data.scheduleDate);
-
-    const registrationDeadline = new Date(data.registrationDeadline);
-
-    const remainingDaysRegistrationDeadline = Math.round((registrationDeadline - dateToday) / msPerDay);
-
-    if(data && remainingDaysRegistrationDeadline > 0){
-        const importantReminders = document.getElementById('importantReminders');
-        const remindersContainer = document.querySelector('.remindersContainer');
-        remindersContainer.classList.remove('hidden');
-
-        importantReminders.innerHTML = `
-        <p>Have you completed your registration for your test scheduled for ${data.scheduleDate}? You have <b>${remainingDaysRegistrationDeadline}</b> day(s) left to register.</p>
-        <button id='confirmRegistrationButton'>Confirm Registration</button>
-        `
+        let dayName = dateToday.toLocaleDateString('en-US', {weekday: 'long'});
+        let monthName = dateToday.toLocaleDateString('en-US', {month: 'long'});
+        let dayOfMonth = dateToday.getDate();
         
-        document.getElementById('confirmRegistrationButton').addEventListener('click', async (event) => {
-            const { data: { user } } = await client.auth.getUser();
+        const scheduledDate = new Date(data.scheduleDate);
 
-            const { data, error } = await client
-                .from('studentRequests')
-                .update({ registrationStatus: 'Registered' })
-                .eq('studentID', user.id)
+        const registrationDeadline = new Date(data.registrationDeadline);
 
-            if (error) {
-                console.error("Request could not be found: ", error);
-                return;
-            }
+        const remainingDaysRegistrationDeadline = Math.round((registrationDeadline - dateToday) / msPerDay);
 
-            alert("Registration status has been updated!");
+        if(remainingDaysRegistrationDeadline > 0){
+            const importantReminders = document.getElementById('importantReminders');
+            const remindersContainer = document.querySelector('.remindersContainer');
+            remindersContainer.classList.remove('hidden');
+
+            importantReminders.innerHTML = `
+            <p>Have you completed your registration for your test scheduled for ${data.scheduleDate}? You have <b>${remainingDaysRegistrationDeadline}</b> day(s) left to register.</p>
+            <button id='confirmRegistrationButton'>Confirm Registration</button>
+            `
             
-            //Clear reminder
-            importantReminders.innerHTML = ``;
-            remindersContainer.classList.add('hidden');
-            remindersContainer.style.display = 'none';
-        });
+            document.getElementById('confirmRegistrationButton').addEventListener('click', async (event) => {
+                const { data: { user } } = await client.auth.getUser();
+
+                const { data, error } = await client
+                    .from('studentRequests')
+                    .update({ registrationStatus: 'Registered' })
+                    .eq('studentID', user.id)
+
+                if (error) {
+                    console.error("Request could not be found: ", error);
+                    return;
+                }
+
+                alert("Registration status has been updated!");
+                
+                //Clear reminder
+                importantReminders.innerHTML = ``;
+                remindersContainer.classList.add('hidden');
+                remindersContainer.style.display = 'none';
+            });
+        }
     }
 
     const userStatistics = await fetchDashboardInformation();
