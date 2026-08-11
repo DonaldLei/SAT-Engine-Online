@@ -441,7 +441,8 @@ scheduleTestDate.addEventListener('submit', async (event) => {
 });
 
 async function testScheduleCheck(){
-   
+    const welcomeMessage = document.getElementById('welcomeMessage');
+    
     const { data: { user } } = await client.auth.getUser();    
 
     const { data, error } = await client
@@ -478,8 +479,6 @@ async function testScheduleCheck(){
     const remainingDaysUntilTest = Math.round((testDateScheduled - dateToday) / msPerDay);
 
     const daysAfterTest = Math.round((dateToday - testDateScheduled) / msPerDay);
-
-    const welcomeMessage = document.getElementById('welcomeMessage');
 
     // Logic for practice blocking leading up to the exam (stop students from practicing 5 days leading up to the test)
     if(remainingDaysUntilTest >= 0 && remainingDaysUntilTest <= 5){
