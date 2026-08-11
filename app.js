@@ -448,21 +448,27 @@ async function testScheduleCheck(){
         .from('studentRequests')
         .select('*')
         .eq('studentID', user.id)
-        .single();
+        .maybeSingle();
     
     //If there is a test date scheduled
     if(error){
         console.error("No test scheduled yet:", error);
         return;
+    } 
+    
+    if(!data){
+        welcomeMessage.textContent = "Continue your work!";
+        blockPractice = false;
+        return;
     }
 
-    const msPerDay = 1000 * 60 * 60 * 24; 
+    const msPerDay = 1000 * 60 * 60 * 24;
 
     const dateToday = new Date();
     dateToday.setHours(0, 0, 0, 0);
 
-    let dayName = dateToday.toLocaleDateString('en-US', {weekday: 'long'});
-    let monthName = dateToday.toLocaleDateString('en-US', {month: 'long'});
+    let dayName = dateToday.toLocaleDateString('en-US', { weekday: 'long' });
+    let monthName = dateToday.toLocaleDateString('en-US', { month: 'long' });
     let dayOfMonth = dateToday.getDate();
 
     const testDateScheduled = new Date(data.scheduleDate);
@@ -485,6 +491,7 @@ async function testScheduleCheck(){
         blockPractice = false;
     }
 }
+
 
 async function fetchScheduleTestDate(){
     const { data: { user } } = await client.auth.getUser();
