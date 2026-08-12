@@ -21,12 +21,15 @@
                 <button class="menuButton" data-target="profileSection"><i class="fa-solid fa-user"></i><span class="menuLabel">Profile</span></button>
                 <button class="menuButton" data-target="statisticsSection"><i class="fa-solid fa-chart-bar"></i><span class="menuLabel">Statistics</span></button>
                 <button class="menuButton" data-target="scheduleTestSection"><i class="fa-solid fa-calendar"></i><span class="menuLabel">Schedule Test Request</span></button>
+                <button class="menuButton push-bottom" data-target="welcomeSection" data-action="logout"><i class="fa-solid fa-right-from-bracket"></i><span class="menuLabel">Logout</span></button>
             </div>
-<!-- 
-            <div id = "tutorSidebar" class = "userRoleSidebar hidden">
-                <button class
-            </div> -->
-            <button class="menuButton push-bottom" data-target="welcomeSection" data-action="logout"><i class="fa-solid fa-right-from-bracket"></i><span class="menuLabel">Logout</span></button>
+
+            <div id = "tutorSidebar" class = "userRoleSidebar">
+                <button class="menuButton" data-target="tutorDashboardSection"><i class="fa-solid fa-house"></i><span class="menuLabel">Dashboard</span></button>
+                <button class="menuButton" data-target="tutorStatisticsSection"><i class="fa-solid fa-chart-bar"></i><span class="menuLabel">Student Statistics</span></button>
+                <button class="menuButton" data-target="tutorTestSchedulingSection"><i class="fa-solid fa-calendar"></i><span class="menuLabel">Schedule Requests</span></button>
+                <button class="menuButton push-bottom" data-target="welcomeSection" data-action="logout"><i class="fa-solid fa-right-from-bracket"></i><span class="menuLabel">Logout</span></button>
+            </div>
         </nav>
     </div>
 
@@ -106,7 +109,7 @@
                 <div class="welcomeUserContainer">
                     <p><span id="current-date"></span></p>
                     <h2 id="welcomeUserMessage"></h2>
-                    <p id ="welcomeMessage">Continue your work!</h3>
+                    <p id ="welcomeMessage">Continue your work!</p>
                 </div>
                 
                 <div class ="remindersContainer hidden">
@@ -238,9 +241,11 @@
         <div id="statisticsSection" class="viewApp hidden">
             <div class="statisticsContainer">
                 <div id="statisticsCharts">
-                    <h1>Your Statistics</h1>
-                    <button id="viewQuestionHistory">View Answered Questions</button>
-                    
+                    <div id ="statisticsHeader">
+                        <h1>Your Statistics</h1>
+                        <button id="viewQuestionHistory">View Answered Questions</button>
+                    </div>
+
                     <h2>Reading & Writing Charts</h2>
                     <div id="chartReadingContainer">
                         <canvas id="chart-1"></canvas>
@@ -376,7 +381,30 @@
         </div>
 
         <!-- Tutor interface -->
-        <div id = "tutorDashboard" class ="viewApp hidden"></div>
+        <div id = "tutorDashboardSection" class ="viewApp hidden">
+            <div class = "dashboardContainer">
+                <h1 class = "dashboardBrand">ClearPillar</h1>
+                <div class = "welcomeUserContainer">
+                    <p><span id="current-date"></span></p>
+                    <h2 id="welcomeTutorMessage"></h2>
+                </div>
+
+                <div class = "remindersContainer hidden">
+                    <h2 id = "tutorNotificationsHeader">Notifications:</h2>
+                    <div id ="tutorNotifications"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id = "tutorStatisticsSection" class = "viewApp hidden">
+            <div class = "tutorStatisticsViewContainer">
+            </div>
+        </div>
+
+        <div id = "tutorTestSchedulingSection" class = "viewApp hidden">
+            <div class = "tutorTestSchedulingView">
+
+            </div>
         </div>
     </div>
 </div>

@@ -13,6 +13,33 @@ let blockPractice = false;
 let questionSubjectDataToDelete = '';
 const chartInstances = {};
 
+//Section DOM
+const welcomeSection = document.getElementById('welcomeSection');
+const authenticationSection = document.getElementById('authenticationSection');
+const dashboardSection = document.getElementById('dashboardSection');
+const practiceSection = document.getElementById('practiceSection');
+const userSetupSection = document.getElementById('userSetupSection');
+const scheduleTestSection = document.getElementById('scheduleTestSection');
+const diagnosticSection = document.getElementById('diagnosticSection');
+const profileSection = document.getElementById('profileSection');
+const statisticsSection = document.getElementById('statisticsSection');
+
+//Tutor Section DOM
+const tutorDashboardSection = document.getElementById('tutorDashboardSection');
+
+//View DOM
+const statisticsCharts = document.getElementById('statisticsCharts');
+const statisticsQuestions = document.getElementById('statisticsQuestions');
+
+//Button DOM
+const enterPortalButton = document.getElementById('enterPortalButton');
+const logoutButton = document.getElementById('logout');
+const startPracticeReadingButton = document.getElementById('startPracticeReading');
+const startPracticeMathButton = document.getElementById('startPracticeMath');
+const userProfileForm = document.getElementById('userProfileForm');
+const menuButtons = document.querySelectorAll('.menuButton');
+const scheduleTestDate = document.getElementById('scheduleTestDate');
+
 //Supabase authentication and sign up
 const SUPABASE_URL = "https://yksokqpgtusgdvnerfsc.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_Npi4T6_d7FZH8aWpl_wTsA_QZPChsQ0";
@@ -81,6 +108,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const { data: { session } } = await client.auth.getSession();
 
     if(session){
+        await checkRole();
         const { data: profile } = await client
             .from('userProfiles')
             .select('first_name, last_name, role')
@@ -91,7 +119,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         if(!profile || !profile.first_name || !profile.last_name){
             changeSection(userSetupSection);
         } else if(profile.role === 'Tutor') {
-            // changeSection(tutorDashboardSection);
+            changeSection(tutorDashboardSection);
         } else {
             const savedSectionId = localStorage.getItem('lastViewedSection');
             const targetSection = savedSectionId ? document.getElementById(savedSectionId) : null;
@@ -255,30 +283,6 @@ async function fetchName(){
     welcomeUserMessage.textContent = `Welcome, ${data.first_name}!`;
 }
 
-//Section DOM
-const welcomeSection = document.getElementById('welcomeSection');
-const authenticationSection = document.getElementById('authenticationSection');
-const dashboardSection = document.getElementById('dashboardSection');
-const practiceSection = document.getElementById('practiceSection');
-const userSetupSection = document.getElementById('userSetupSection');
-const scheduleTestSection = document.getElementById('scheduleTestSection');
-const diagnosticSection = document.getElementById('diagnosticSection');
-const profileSection = document.getElementById('profileSection');
-const statisticsSection = document.getElementById('statisticsSection');
-
-//View DOM
-const statisticsCharts = document.getElementById('statisticsCharts');
-const statisticsQuestions = document.getElementById('statisticsQuestions');
-
-//Button DOM
-const enterPortalButton = document.getElementById('enterPortalButton');
-const logoutButton = document.getElementById('logout');
-const startPracticeReadingButton = document.getElementById('startPracticeReading');
-const startPracticeMathButton = document.getElementById('startPracticeMath');
-const userProfileForm = document.getElementById('userProfileForm');
-const menuButtons = document.querySelectorAll('.menuButton');
-const scheduleTestDate = document.getElementById('scheduleTestDate');
-
 document.getElementById('sidebarToggle').addEventListener('click', () => {
     document.getElementById('appSidebar').classList.toggle('collapsed');
 });
@@ -440,6 +444,39 @@ scheduleTestDate.addEventListener('submit', async (event) => {
     await fetchScheduleTestDate();
 });
 
+//To be used to determine which interface to show the user 
+async function checkRole(){
+    const { data: { user } } = await client.auth.getUser();
+
+    if(!user){
+        return;
+    }
+
+    const { data, error } = await client
+        .from('userProfiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+    
+    if(error){
+        console.error("Could not fetch user's role: ", error);
+        return;
+    }
+
+    const userRole = data.role;
+
+    const studentSidebar = document.getElementById('studentSidebar');
+    const tutorSidebar = document.getElementById('tutorSidebar');
+
+    if(userRole === 'Tutor'){
+        studentSidebar.style.display = 'none';
+        tutorSidebar.style.display = 'flex';
+    } else {
+        studentSidebar.style.display = 'flex';
+        tutorSidebar.style.display = 'none';
+    }
+}
+
 async function testScheduleCheck(){
     const welcomeMessage = document.getElementById('welcomeMessage');
 
@@ -492,7 +529,6 @@ async function testScheduleCheck(){
         blockPractice = false;
     }
 }
-
 
 async function fetchScheduleTestDate(){
     const { data: { user } } = await client.auth.getUser();
@@ -856,19 +892,33 @@ function createChart(canvasId, domainData) {
         chartInstances[canvasId].destroy();
     }
 
+    const skillNames = [];
+    const skillAccuracy = [];
+
+    for(const skill of domainData.skills){
+        skillNames.push(skill.skillName);
+        skillAccuracy.push(skill.accuracy);
+}
+
     chartInstances[canvasId] = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: [domainData.domainName],
+            labels: skillNames,
             datasets: [{
-                label: 'Accuracy %',
-                data: [domainData.domainAccuracy],
+                label: 'Skill Accuracy %',
+                data: skillAccuracy,
                 backgroundColor: '#89CFF0'
             }]
         },
         options: { 
             responsive: true, 
-            
+            indexAxis: 'y',
+            plugins: {
+                title: {
+                    display: true,
+                    text: domainData.domainName
+                }
+            },
             scales: { 
                 y: { max: 100 } 
             } 
@@ -1395,17 +1445,26 @@ async function fetchDashboardInformation(){
     for(const item of data){
         const questionDomainName = item.questionDomain;
         const questionSubject = item.subject;
+        const questionSkillName = item.questionSkill;
+
+        if(!questionMap[questionSubject]) {
+            questionMap[questionSubject] = {};
+        }
+        if(!questionMap[questionSubject][questionDomainName]) {
+            questionMap[questionSubject][questionDomainName] = {};
+        }
         
-        if(!questionMap[questionSubject][questionDomainName]){
-            questionMap[questionSubject][questionDomainName] = {
+        if(!questionMap[questionSubject][questionDomainName][questionSkillName]){
+            questionMap[questionSubject][questionDomainName][questionSkillName] = {
                 domainName: questionDomainName,
+                skillName: questionSkillName,
                 totalQuestions: 0,
                 correctCount: 0,
                 totalTimeElapsed: 0
             };
         }
 
-        const questionGroup = questionMap[questionSubject][questionDomainName];
+        const questionGroup = questionMap[questionSubject][questionDomainName][questionSkillName];
         questionGroup.totalQuestions += 1;
         questionGroup.correctCount += item.isCorrect ? 1 : 0;
         questionGroup.totalTimeElapsed += item.timeElapsed;
@@ -1414,14 +1473,34 @@ async function fetchDashboardInformation(){
     const userStatistics = { English: [], Mathematics: [] };  
 
     for(const questionSubject in questionMap){
+        userStatistics[questionSubject] = [];
         for(const questionDomain in questionMap[questionSubject]){
             const questionGroup = questionMap[questionSubject][questionDomain];
-        
-            questionGroup.domainName = (questionGroup.domainName);
-            questionGroup.domainAccuracy = Math.round((questionGroup.correctCount / questionGroup.totalQuestions) * 100);
-            questionGroup.domainAverageTimeElapsed = Math.round(questionGroup.totalTimeElapsed / questionGroup.totalQuestions);
+            
+            const skillsGroup = [];
+            let domainTotalQuestions = 0;
+            let domainCorrectCount = 0;
+            let domainTotalTime = 0;
 
-            userStatistics[questionSubject].push(questionGroup);
+            for(const skillName in questionGroup){
+                const skillCategory = questionGroup[skillName];
+                skillCategory.accuracy = Math.round((skillCategory.correctCount / skillCategory.totalQuestions) * 100);
+                skillCategory.averageTime = Math.round(skillCategory.totalTimeElapsed / skillCategory.totalQuestions);
+                skillsGroup.push(skillCategory)
+
+                domainTotalQuestions += skillCategory.totalQuestions;
+                domainCorrectCount += skillCategory.correctCount;
+                domainTotalTime += skillCategory.totalTimeElapsed;
+            }
+
+            skillsGroup.sort((a, b) => a.accuracy - b.accuracy);
+
+            userStatistics[questionSubject].push({
+                domainName: questionDomain,
+                domainAccuracy: Math.round((domainCorrectCount / domainTotalQuestions) * 100),
+                domainAverageTimeElapsed: Math.round(domainTotalTime / domainTotalQuestions),
+                skills: skillsGroup
+            });
         }
 
         userStatistics[questionSubject].sort((a, b) => a.domainAccuracy - b.domainAccuracy);

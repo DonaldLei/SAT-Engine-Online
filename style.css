@@ -82,10 +82,10 @@ body {
 }
 #userSetupSection {
     background-color: #EFEFEF;
-    min-height: 100vh; /* Forces the section to be at least the height of the screen */
+    min-height: 100vh; 
     width: 100%;
-    padding: 20px;     /* Prevents content from touching the very edge */
-    box-sizing: border-box; /* Important: prevents padding from breaking the width */
+    padding: 20px;     
+    box-sizing: border-box;
 }
 /* set up user profile */
 #userProfileForm {
@@ -233,17 +233,28 @@ body {
     height: 100%;
     overflow-y: auto;
     display: flex;
+    flex-direction: column;
     background-color: #EFEFEF;
 }
 
-.statisticsHeader {
+#statisticsCharts {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#statisticsHeader {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-    width: 100%;
-    margin-bottom: 20px;
+    margin: 20px 0 30px 0;
+}
+
+#statisticsHeader h1 {
+    margin-bottom: 15px;
 }
 
 #statisticsQuestions {
@@ -273,10 +284,11 @@ body {
 
 #chartReadingContainer, #chartMathContainer {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-    width: 500px;
-    margin-bottom: 40px;
+    grid-template-columns: 1fr;
+    width: 90%;
+    /* margin-bottom: 40px; */
+    background-color: white;
+    border-radius: 20px;
 }
 
 #allQuestionsAnsweredContainer {
