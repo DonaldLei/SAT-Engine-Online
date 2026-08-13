@@ -120,8 +120,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         
         if(!profile || !profile.first_name || !profile.last_name){
             changeSection(userSetupSection);
-        } else if(profile.role === 'Tutor') {
-            changeSection(tutorDashboardSection);
         } else {
             const savedSectionId = localStorage.getItem('lastViewedSection');
             const targetSection = savedSectionId ? document.getElementById(savedSectionId) : null;
@@ -159,7 +157,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                 await fetchScheduleTestDate();
                 await renderProfile();
                 await renderStatistics();
-                
             }
         }
     } else {
@@ -324,14 +321,17 @@ function changeSection(nextSection){
     
     nextSection.classList.remove('hidden');
 
-    const studentSidebar = document.getElementById('studentSidebar');
+    // const studentSidebar = document.getElementById('studentSidebar');
+    const sidebar = document.getElementById('appSidebar');
+    
     
     const hideSidebarOn = ['welcomeSection', 'authenticationSection', 'userSetupSection'];
+    
 
     if(hideSidebarOn.includes(nextSection.id)){
-        studentSidebar.classList.add('hidden'); 
+        sidebar.classList.add('hidden'); 
     } else {
-        studentSidebar.classList.remove('hidden');
+        sidebar.classList.remove('hidden');
     }
 
     document.querySelectorAll('.menuButton').forEach(button => {
