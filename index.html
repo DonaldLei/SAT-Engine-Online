@@ -107,7 +107,7 @@
             <div class="dashboardContainer">
                 <h1 class="dashboardBrand">ClearPillar</h1>
                 <div class="welcomeUserContainer">
-                    <p><span id="current-date"></span></p>
+                    <p><span class="current-date"></span></p>
                     <h2 id="welcomeUserMessage"></h2>
                     <p id ="welcomeMessage">Continue your work!</p>
                 </div>
@@ -385,11 +385,11 @@
             <div class = "dashboardContainer">
                 <h1 class = "dashboardBrand">ClearPillar</h1>
                 <div class = "welcomeUserContainer">
-                    <p><span id="current-date"></span></p>
-                    <h2 id="welcomeTutorMessage"></h2>
+                    <p><span class="current-date"></span></p>
+                    <h2 id="welcomeTutorMessage">Welcome, Tutor!</h2>
                 </div>
 
-                <div class = "remindersContainer hidden">
+                <div class = "tutorRemindersContainer hidden">
                     <h2 id = "tutorNotificationsHeader">Notifications:</h2>
                     <div id ="tutorNotifications"></div>
                 </div>
@@ -398,11 +398,19 @@
 
         <div id = "tutorStatisticsSection" class = "viewApp hidden">
             <div class = "tutorStatisticsViewContainer">
+                <h1>Incomplete</h1>
             </div>
         </div>
 
         <div id = "tutorTestSchedulingSection" class = "viewApp hidden">
             <div class = "tutorTestSchedulingView">
+                <div id = "testScheduleHeader">
+                    <h1>Student Schedule Requests</h1>
+                    <h3>See all schedule requests made by your students.</h3>
+                </div>
+
+                <div id = "studentScheduleRequestsContainer">
+                </div>
 
             </div>
         </div>
@@ -421,7 +429,12 @@
 
   const formattedDate = `${monthName} ${dayOfMonth} | ${dayName}`;
   
-  document.getElementById('current-date').textContent = formattedDate;
+  const currentDateElements = document.querySelectorAll('.current-date');
+
+  currentDateElements.forEach((element) => {
+    element.innerHTML = formattedDate;
+  });
+  
 </script>
 
 </body>

@@ -26,6 +26,8 @@ const statisticsSection = document.getElementById('statisticsSection');
 
 //Tutor Section DOM
 const tutorDashboardSection = document.getElementById('tutorDashboardSection');
+const tutorStatisticsSection = document.getElementById('tutorStatisticsSection');
+const tutorTestSchedulingSection = document.getElementById('tutorTestSchedulingSection');
 
 //View DOM
 const statisticsCharts = document.getElementById('statisticsCharts');
@@ -131,8 +133,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                     await renderDashboard();
                 }
 
+                if(targetSection.id === 'tutorDashboardSection'){
+                    await renderTutorDashboard();
+                }
+
                 if(targetSection.id === 'scheduleTestSection'){
                     await fetchScheduleTestDate();
+                }
+
+                if(targetSection.id === 'tutorTestSchedulingSection'){
+                    await fetchStudentScheduledTestDates();
                 }
 
                 if(targetSection.id === 'profileSection'){
@@ -145,9 +155,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             } else {
                 await renderDashboard();
+                await renderTutorDashboard();
                 await fetchScheduleTestDate();
                 await renderProfile();
                 await renderStatistics();
+                
             }
         }
     } else {
@@ -238,7 +250,7 @@ authSubmit.addEventListener("click", async () => {
             
             const { data, error } = await client
                 .from('userProfiles')
-                .select('first_name, last_name')
+                .select('first_name, last_name, role')
                 .eq('id', user.id)
                 .single();
             
@@ -248,8 +260,10 @@ authSubmit.addEventListener("click", async () => {
             
             if(!data.first_name || !data.last_name){
                 changeSection(userSetupSection);
-            } else {
+            } else if(data.role === 'Student'){
                 await renderDashboard();
+            } else if(data.role === 'Tutor'){
+                await renderTutorDashboard();
             }
         }
     } else {
@@ -264,6 +278,22 @@ authSubmit.addEventListener("click", async () => {
 });
 
 //Welcome message
+
+function getCurrentDate(){
+    const today = new Date();
+  
+    let dayName = today.toLocaleDateString('en-US', {weekday: 'long'});
+    let monthName = today.toLocaleDateString('en-US', {month: 'long'});
+    let dayOfMonth = today.getDate();
+
+    const formattedDate = `${monthName} ${dayOfMonth} | ${dayName}`;
+    
+    const currentDateElements = document.querySelectorAll('.current-date');
+
+    currentDateElements.forEach((element) => {
+        element.innerHTML = formattedDate;
+    });
+}
 
 async function fetchName(){
     const { data: { user } } = await client.auth.getUser();
@@ -552,6 +582,39 @@ async function fetchScheduleTestDate(){
     registrationStatus.textContent = `Registration status: ${data.registrationStatus}`;
 }
 
+async function fetchStudentScheduledTestDates(){
+    const { data: { user } } = await client.auth.getUser();
+
+    const { data, error } = await client
+        .from('studentRequests')
+        .select('*')
+    
+    if(error){
+        console.error("Could not fetch any scheduled dates: ", error);
+    }
+
+    if(data){
+        let tempText = ``;
+
+        const studentScheduleRequestsContainer = document.getElementById('studentScheduleRequestsContainer');
+        for(let i = 0; i < data.length; i++){
+            const item = data[i];
+
+            tempText += `
+                <div class = "studentScheduleCard">
+                    <p>First Name: ${item.studentFirstName}<p>
+                    <p>Last Name: ${item.studentLastName}</p>
+                    <p>Scheduled Date: ${item.scheduleDate}</p>
+                    <p>Registration Deadline: ${item.registrationDeadline}</p>
+                    <p>Registration Status: ${item.registrationStatus}</p>
+                </div>`
+
+        }
+
+        studentScheduleRequestsContainer.innerHTML = tempText;
+    }
+}
+
 //Determine if student has completed the necessary work for today
 async function checkEnglishQuestionsCompletedToday(){
     //Get the date today
@@ -567,7 +630,7 @@ async function checkEnglishQuestionsCompletedToday(){
 
     const { data: { user } } = await client.auth.getUser();
     
-    const { count , error } = await client
+    const { count, error } = await client
         .from('userResponses')
         .select('questionID', { count: 'exact', head: true})
         .eq('id', user.id)
@@ -653,7 +716,7 @@ async function renderDashboard(){
             importantReminders.innerHTML = `
             <p>Have you completed your registration for your test scheduled for ${data.scheduleDate}? You have <b>${remainingDaysRegistrationDeadline}</b> day(s) left to register.</p>
             <button id='confirmRegistrationButton'>Confirm Registration</button>
-            `
+            `;
             
             document.getElementById('confirmRegistrationButton').addEventListener('click', async (event) => {
                 const { data: { user } } = await client.auth.getUser();
@@ -732,6 +795,33 @@ async function renderDashboard(){
                 <p id ="remainingTasksText">You have completed all tasks for today! Feel free to practice more if you wish.</p>
             </div>
         `;
+    }
+}
+
+async function renderTutorDashboard(){
+    changeSection(tutorDashboardSection);
+
+    const { data: { user } } = await client.auth.getUser();
+
+    const { count, error } = await client
+        .from('studentRequests')
+        .select('studentID', { count: 'exact', head: true})
+        .eq('registrationStatus', 'Not registered');
+    
+    if(error){
+        console.error("Error fetching number of student requests: ", error);
+    }
+
+    console.log(count);
+
+    if(count > 0){
+        const tutorRemindersContainer = document.querySelector('.tutorRemindersContainer');
+        const tutorNotifications = document.getElementById('tutorNotifications');
+
+        tutorRemindersContainer.classList.remove('hidden');
+
+        tutorNotifications.innerHTML = `
+        <p>You have <b>${count}</b> students who haven't registered for their upcoming test date!</p>`;
     }
 }
 
@@ -1058,8 +1148,16 @@ document.querySelectorAll('.menuButton').forEach(button => {
             await renderDashboard();
         }
 
+        if(targetId === 'tutorDashboardSection'){
+            await renderTutorDashboard();
+        }
+
         if(targetId === 'scheduleTestSection'){
             await fetchScheduleTestDate();
+        }
+
+        if(targetId === 'tutorTestSchedulingSection'){
+            await fetchStudentScheduledTestDates();
         }
 
         if(targetId === 'statisticsSection'){
